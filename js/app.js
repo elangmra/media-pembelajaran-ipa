@@ -43,22 +43,21 @@ const AudioManager = (() => {
   let muted    = false;  // default: musik NYALA otomatis
   const TARGET_VOL = 0.4;
   const FADE_MS    = 800;
-  let fadeTimer    = null;
 
   /** Fade volume dari `from` ke `to` pada audio `a` */
   function fadeTo(a, from, to, onDone) {
-    clearInterval(fadeTimer);
+    clearInterval(a._fadeTimer);
     const steps = 30;
     const stepTime = FADE_MS / steps;
     const delta = (to - from) / steps;
     let vol = from;
     a.volume = Math.max(0, Math.min(1, vol));
-    fadeTimer = setInterval(() => {
+    a._fadeTimer = setInterval(() => {
       vol += delta;
       a.volume = Math.max(0, Math.min(1, vol));
       if ((delta > 0 && vol >= to) || (delta < 0 && vol <= to)) {
         a.volume = Math.max(0, Math.min(1, to));
-        clearInterval(fadeTimer);
+        clearInterval(a._fadeTimer);
         if (onDone) onDone();
       }
     }, stepTime);
@@ -201,7 +200,10 @@ function showProses(id, btn) {
 // ============================================
 function changeVideo(videoId, el) {
   const iframe = document.getElementById('youtube-video');
-  if (iframe) iframe.src = 'https://www.youtube.com/embed/' + videoId;
+  const link = document.getElementById('youtube-link');
+  if (iframe) iframe.src = 'https://www.youtube.com/embed/' + videoId + '?autoplay=1';
+  if (link) link.href = 'https://www.youtube.com/watch?v=' + videoId;
+
   document.querySelectorAll('.video-item').forEach(v => v.style.background = '');
   if (el) el.style.background = '#EBF8FF';
   window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -578,9 +580,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Browser butuh interaksi pertama sebelum bisa autoplay
   // → musik langsung mulai begitu user klik apapun untuk pertama kali
+  // capture: true agar listener ini jalan sebelum handler tombol lain (mis. tombol mute)
   document.addEventListener('click', () => {
     AudioManager.play(document.querySelector('.screen.active')?.id || 'screen-intro');
-  }, { once: true });
+  }, { once: true, capture: true });
 
   // Tombol mulai dengan ikon 🔊
   setTimeout(() => {

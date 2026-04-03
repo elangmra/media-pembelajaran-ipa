@@ -169,56 +169,69 @@
 
   <!-- ===================== SCREEN: LOGIN ===================== -->
   <div id="screen-login" class="screen">
-    <div class="login-bg">
-      <!-- Awan SVG login -->
-      <!-- Awan SVG login -->
-      <div class="login-cloud lc1">
-        <svg viewBox="0 0 220 100" xmlns="http://www.w3.org/2000/svg" overflow="visible">
-          <g opacity="0.5">
-            <rect x="30" y="62" width="160" height="30" rx="15" fill="white"/>
-            <circle cx="60"  cy="62" r="24" fill="white"/>
-            <circle cx="95"  cy="50" r="32" fill="white"/>
-            <circle cx="138" cy="56" r="26" fill="white"/>
-            <circle cx="170" cy="64" r="20" fill="white"/>
-          </g>
-        </svg>
+    <div class="login-container">
+      
+      <!-- DECORATIVE BACKGROUND ELEMENTS -->
+      <div class="login-decorations">
+        <div class="deco-blob blob-1"></div>
+        <div class="deco-blob blob-2"></div>
+        <div class="deco-blob blob-3"></div>
+        
+        <!-- Floating Elements -->
+        <div class="floating-item fi-1">🫁</div>
+        <div class="floating-item fi-2">✨</div>
+        <div class="floating-item fi-3">💨</div>
+        <div class="floating-item fi-4">🌟</div>
+        <div class="floating-item fi-5">🌬️</div>
       </div>
-      <div class="login-cloud lc2">
-        <svg viewBox="0 0 180 80" xmlns="http://www.w3.org/2000/svg" overflow="visible">
-          <g opacity="0.38">
-            <rect x="25" y="50" width="130" height="24" rx="12" fill="white"/>
-            <circle cx="48"  cy="50" r="20" fill="white"/>
-            <circle cx="80"  cy="38" r="26" fill="white"/>
-            <circle cx="118" cy="44" r="22" fill="white"/>
-            <circle cx="148" cy="52" r="16" fill="white"/>
-          </g>
-        </svg>
-      </div>
-      <!-- Bintang-bintang decoratif -->
-      <div class="login-star ls1">⭐</div>
-      <div class="login-star ls2">🌟</div>
-      <div class="login-star ls3">✨</div>
-      <div class="login-star ls4">⭐</div>
-    </div>
-    <div class="login-card">
-      <div class="login-header">
-        <div class="login-icon">👋</div>
-        <h2>Halo, Sahabat Belajar!</h2>
-        <p>Silakan isi data dirimu dulu ya 😊</p>
-      </div>
-      <form id="login-form" onsubmit="handleLogin(event)">
-        <div class="form-group">
-          <label for="input-nama">📝 Nama Lengkap</label>
-          <input type="text" id="input-nama" placeholder="Tulis namamu di sini..." required autocomplete="off"/>
+
+      <!-- LOGIN CARD -->
+      <div class="login-glass-card">
+        <div class="login-card-inner">
+          <div class="login-brand">
+            <div class="brand-icon-wrap">
+              <svg viewBox="0 0 120 100" xmlns="http://www.w3.org/2000/svg">
+                <path d="M60 10 Q60 30 55 45 Q45 55 35 60 Q20 65 15 75 Q10 85 20 90 Q35 95 50 85 Q60 75 60 65 Q60 75 70 85 Q85 95 100 90 Q110 85 105 75 Q100 65 85 60 Q75 55 65 45 Q60 30 60 10Z" fill="url(#loginLungGrad)" />
+                <defs>
+                  <linearGradient id="loginLungGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" style="stop-color:#FF6B9D"/>
+                    <stop offset="100%" style="stop-color:#C44569"/>
+                  </linearGradient>
+                </defs>
+              </svg>
+            </div>
+            <h1>Halo, Sahabat Pintar!</h1>
+            <p>Siap untuk petualangan belajar hari ini?</p>
+          </div>
+
+          <form id="login-form" class="modern-form" onsubmit="handleLogin(event)">
+            <div class="input-field">
+              <label for="input-nama">Nama Lengkap Kamu</label>
+              <div class="input-wrapper">
+                <span class="input-icon">👤</span>
+                <input type="text" id="input-nama" placeholder="Ketik namamu di sini..." required autocomplete="off"/>
+              </div>
+            </div>
+
+            <div class="input-field">
+              <label for="input-kelas">Kelas</label>
+              <div class="input-wrapper">
+                <span class="input-icon">🏫</span>
+                <input type="text" id="input-kelas" placeholder="Misal: 5-A" required autocomplete="off"/>
+              </div>
+            </div>
+
+            <button type="submit" class="btn-login-submit">
+              <span class="btn-text">Mulai Petualangan</span>
+              <span class="btn-icon">🚀</span>
+            </button>
+          </form>
+
+          <div class="login-footer">
+            <p>IPAS Kelas 5 SD/MI • Sistem Pernapasan</p>
+          </div>
         </div>
-        <div class="form-group">
-          <label for="input-kelas">🏫 Kelas</label>
-          <input type="text" id="input-kelas" placeholder="Contoh: 5A" required autocomplete="off"/>
-        </div>
-        <button type="submit" class="btn-primary btn-full">
-          <span>🚀 Masuk ke Menu Utama</span>
-        </button>
-      </form>
+      </div>
     </div>
   </div>
 
@@ -262,7 +275,7 @@
       <svg class="deco-icon deco-tube" viewBox="0 0 40 80" xmlns="http://www.w3.org/2000/svg">
         <rect x="10" y="4" width="20" height="52" rx="10" fill="#81D4FA" opacity="0.6" stroke="#29B6F6" stroke-width="2.5"/>
         <ellipse cx="20" cy="56" rx="10" ry="4" fill="#29B6F6" opacity="0.6"/>
-        <rect x="14" y="36" width="12" height="20" fill="#4FC3F7" opacity="0.5" rx="0 0 8 8"/>
+        <rect x="14" y="36" width="12" height="20" fill="#4FC3F7" opacity="0.5" rx="4"/>
       </svg>
     </div>
 
@@ -675,6 +688,9 @@
           <h3>Hidung (Nasal Cavity)</h3>
         </div>
         <div class="organ-detail">
+          <div class="organ-illustration">
+             <img src="images/hidung_edu.png" alt="Ilustrasi Hidung" class="img-edu-organ" />
+          </div>
           <div class="organ-fact-grid">
             <div class="organ-fact-card">
               <span>🔵</span>
@@ -711,6 +727,9 @@
           <h3>Tenggorokan (Trakea)</h3>
         </div>
         <div class="organ-detail">
+          <div class="organ-illustration">
+             <img src="images/tenggorokan_edu.png" alt="Ilustrasi Tenggorokan" class="img-edu-organ" />
+          </div>
           <div class="organ-fact-grid">
             <div class="organ-fact-card">
               <span>🔵</span>
@@ -747,6 +766,9 @@
           <h3>Paru-Paru (Pulmo)</h3>
         </div>
         <div class="organ-detail">
+          <div class="organ-illustration">
+             <img src="images/paruparu_edu.png" alt="Ilustrasi Paru-Paru" class="img-edu-organ" />
+          </div>
           <div class="organ-fact-grid">
             <div class="organ-fact-card">
               <span>🔵</span>
@@ -905,7 +927,7 @@
     <div class="content-body">
       <div class="jenis-grid">
         <div class="jenis-card jenis-dada">
-          <div class="jenis-icon">🫀</div>
+          <div class="jenis-icon">💨</div>
           <h3>Pernapasan Dada</h3>
           <div class="jenis-badge">Otot Antar Tulang Rusuk</div>
           <div class="jenis-detail">
@@ -924,7 +946,7 @@
           </div>
         </div>
         <div class="jenis-card jenis-perut">
-          <div class="jenis-icon">🫃</div>
+          <div class="jenis-icon">🌬️</div>
           <h3>Pernapasan Perut</h3>
           <div class="jenis-badge">Otot Diafragma</div>
           <div class="jenis-detail">
@@ -995,12 +1017,18 @@
       <div class="video-container">
         <iframe
           id="youtube-video"
-          src="https://www.youtube.com/embed/Lzl9i_rBhCw"
+          src="https://www.youtube.com/embed/mqwj6eqIyuA?si=0cJltiEZnnqzL8Qt&autoplay=1"
           title="Sistem Pernapasan Manusia - Video Pembelajaran"
           frameborder="0"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          referrerpolicy="strict-origin-when-cross-origin"
           allowfullscreen>
         </iframe>
+      </div>
+      <div class="video-fallback">
+        <a id="youtube-link" href="https://www.youtube.com/watch?v=mqwj6eqIyuA" target="_blank" class="btn-primary" style="width:100%; margin-bottom: 1.5rem; gap: 0.5rem;">
+          <span>🌐 Tonton Langsung di YouTube</span>
+        </a>
       </div>
       <div class="video-notes">
         <h4>📝 Yang perlu diperhatikan saat menonton:</h4>
@@ -1010,13 +1038,13 @@
           <li>📌 Catat fakta menarik yang kamu temukan!</li>
         </ul>
       </div>
-      <div class="video-list">
-        <h4>🎯 Video Tambahan</h4>
-        <div class="video-item" onclick="changeVideo('Lzl9i_rBhCw', this)">
+      <div class="video-list" style="display:none">
+        <h4>🎯 Video Utama & Tambahan</h4>
+        <div class="video-item" onclick="changeVideo('mqwj6eqIyuA', this)">
           <span class="video-thumb">▶️</span>
           <div>
-            <p><strong>Sistem Pernapasan Manusia (Penjelasan Lengkap)</strong></p>
-            <span>Penjelasan organ dan proses pernapasan</span>
+            <p><strong>Sistem Pernapasan Manusia (Video Utama)</strong></p>
+            <span>Penjelasan terlengkap tentang pernapasan</span>
           </div>
         </div>
         <div class="video-item" onclick="changeVideo('YLJoVWq3uOA', this)">
@@ -1324,13 +1352,6 @@
           <div class="rujukan-detail">
             <h4>Video Pembelajaran</h4>
             <p>Ruang Guru. (2022). <em>Sistem Pernapasan Manusia – IPAS Kelas 5 SD</em>. YouTube. Diakses dari https://www.youtube.com</p>
-          </div>
-        </div>
-        <div class="rujukan-item">
-          <div class="rujukan-num">5</div>
-          <div class="rujukan-detail">
-            <h4>Gambar dan Ilustrasi</h4>
-            <p>Gambar ilustrasi dalam media ini dibuat menggunakan teknologi AI (Google Gemini) untuk keperluan pendidikan non-komersial.</p>
           </div>
         </div>
       </div>
