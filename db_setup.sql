@@ -1,5 +1,4 @@
-CREATE DATABASE IF NOT EXISTS media_pembelajaran CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-USE media_pembelajaran;
+
 
 CREATE TABLE IF NOT EXISTS leaderboard (
   id         INT AUTO_INCREMENT PRIMARY KEY,
