@@ -144,22 +144,11 @@
     <!-- KONTEN TENGAH -->
     <div class="intro-content">
       <div class="intro-logo">
-        <div class="lung-icon">
-          <svg viewBox="0 0 120 100" xmlns="http://www.w3.org/2000/svg">
-            <path d="M60 10 Q60 30 55 45 Q45 55 35 60 Q20 65 15 75 Q10 85 20 90 Q35 95 50 85 Q60 75 60 65 Q60 75 70 85 Q85 95 100 90 Q110 85 105 75 Q100 65 85 60 Q75 55 65 45 Q60 30 60 10Z" fill="url(#lungGrad2)" opacity="0.95"/>
-            <rect x="57" y="5" width="6" height="30" rx="3" fill="#1565C0"/>
-            <defs>
-              <linearGradient id="lungGrad2" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" style="stop-color:#FF6B9D"/>
-                <stop offset="100%" style="stop-color:#C44569"/>
-              </linearGradient>
-            </defs>
-          </svg>
-        </div>
+        <img src="images/sistem_pernapasan_orang.png" alt="Sistem Pernapasan" class="intro-person-img" />
       </div>
-      <h1 class="intro-title">Media Pembelajaran<br/><span>Interaktif</span></h1>
-      <h2 class="intro-subject">Sistem Pernapasan Manusia</h2>
-      <p class="intro-class">IPAS Kelas 5 SD/MI</p>
+      <h1 class="intro-title" style="font-size: 3.5rem;">SIMPERA</h1>
+      <h2 class="intro-subject" style="font-size: 1.4rem;">Sistem Pernapasan Manusia</h2>
+      <p class="intro-class">Media Pembelajaran Interaktif IPAS Kelas 5</p>
       <p class="intro-source">Sumber: ESPS IPAS SD/MI Kelas V Hal. 104</p>
       <button id="btn-intro-start" class="btn-primary btn-pulse" onclick="showScreen('screen-login')">
         <span>✨ Mulai Belajar</span>
@@ -304,12 +293,17 @@
     </div>
 
     <div class="menu-title-wrap">
-      <h1 class="menu-title-line1">Sistem Pernapasan</h1>
-      <h1 class="menu-title-line2">Manusia</h1>
+      <h1 class="menu-title-line1" style="font-size: 1.4rem;">Sistem Pernapasan Manusia</h1>
+      <h1 class="menu-title-line2" style="font-size: 3.2rem; color: #E65100; letter-spacing: 2px;">SIMPERA</h1>
       <p class="menu-subtitle">IPAS · Kelas 5 SD/MI</p>
     </div>
 
     <div class="bigmenu-row">
+      <button class="bigmenu-card bmc-panduan" onclick="showScreen('screen-panduan')">
+        <span class="bmc-label-top">PANDUAN</span>
+        <div class="bmc-icon">🧭</div>
+        <span class="bmc-label-bot">APLIKASI</span>
+      </button>
       <button class="bigmenu-card bmc-capaian" onclick="showScreen('screen-capaian')">
         <span class="bmc-label-top">CAPAIAN</span>
         <div class="bmc-icon">🎯</div>
@@ -320,7 +314,7 @@
         <div class="bmc-icon">📋</div>
         <span class="bmc-label-bot">PEMBELAJARAN</span>
       </button>
-      <button class="bigmenu-card bmc-materi" onclick="showScreen('screen-materi')">
+      <button class="bigmenu-card bmc-materi" onclick="checkPretest()">
         <span class="bmc-label-top">MATERI</span>
         <div class="bmc-icon">🫁</div>
         <span class="bmc-label-bot">BELAJAR</span>
@@ -347,12 +341,58 @@
       </button>
     </div>
   </div>
+  <!-- ===================== SCREEN: PANDUAN APLIKASI ===================== -->
+  <div id="screen-panduan" class="screen content-screen">
+    <!-- WAVE HEADER -->
+    <div class="wave-header" style="background: linear-gradient(135deg, #7986CB, #283593);">
+      <div class="wave-header-deco">
+        <div class="hd-circle hd-c1"></div>
+        <div class="hd-circle hd-c2"></div>
+        <div class="hd-circle hd-c3"></div>
+      </div>
+      <div class="wave-header-inner">
+        <button class="btn-wave-back" onclick="showScreen('screen-menu')">&#8592; Kembali</button>
+        <div class="wave-header-title">
+          <h2>Panduan Aplikasi</h2>
+          <p>Petunjuk penggunaan media pembelajaran</p>
+        </div>
+        <div class="wave-header-icon">🧭</div>
+      </div>
+      <div class="wave-header-wave">
+        <svg viewBox="0 0 1200 50" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M0 30 Q300 0 600 25 Q900 50 1200 20 L1200 50 L0 50Z" fill="#F8FAFF"/>
+        </svg>
+      </div>
+    </div>
+
+    <div class="content-body">
+      <div class="screen-hero" style="border-color:#7986CB;">
+        <div class="screen-hero-icon">👋</div>
+        <div>
+          <h3>SELAMAT DATANG DI APLIKASI PEMBELAJARAN INTERAKTIF IPAS KELAS 5</h3>
+        </div>
+      </div>
+
+      <div class="rangkuman-section" style="padding: 1.5rem; border-left: 4px solid #7986CB;">
+        <p style="font-size: 0.95rem; line-height: 1.6; color: var(--text-dark); margin-bottom: 1.5rem; text-align: justify;">
+          Aplikasi ini dirancang khusus untuk membantu siswa kelas 5 SD dalam memahami konsep penting dalam mata pelajaran Ilmu Pengetahuan Alam dan Sosial (IPAS), yaitu Sistem Pernapasan Manusia (SIMPERA), dengan cara yang interaktif, menyenangkan, dan mudah dipahami.
+        </p>
+        <h4 style="font-size: 1rem; font-weight: 800; color: var(--text-dark); margin-bottom: 0.8rem;">MELALUI APLIKASI INI, SISWA AKAN BELAJAR TENTANG :</h4>
+        <ol style="list-style-type: decimal; margin-left: 1.2rem; font-size: 0.95rem; line-height: 1.6; color: var(--text-dark); display: flex; flex-direction: column; gap: 0.5rem;">
+          <li><strong style="color: #1A237E;">Organ Pernapasan</strong> ( Materi Tenggorokan, Materi Hidung, Materi Paru-paru )</li>
+          <li><strong style="color: #1A237E;">Proses Pernapasan</strong></li>
+          <li><strong style="color: #1A237E;">Gangguan dan Cara Memelihara</strong> Organ Pernapasan Manusia</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+
 
 
   <!-- ===================== SCREEN: CAPAIAN PEMBELAJARAN ===================== -->
   <div id="screen-capaian" class="screen content-screen">
     <!-- WAVE HEADER -->
-    <div class="wave-header" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+    <div class="wave-header" style="background: linear-gradient(135deg, #64B5F6, #1976D2);">
       <div class="wave-header-deco">
         <div class="hd-circle hd-c1"></div>
         <div class="hd-circle hd-c2"></div>
@@ -374,67 +414,21 @@
     </div>
 
     <div class="content-body">
-      <!-- Hero banner -->
-      <div class="screen-hero" style="border-color:#667eea;">
-        <div class="screen-hero-icon">📚</div>
-        <div>
-          <h3>Elemen Pemahaman IPAS</h3>
-          <p>Peserta didik mampu memahami dan menjelaskan organ-organ penyusun sistem pernapasan manusia beserta fungsinya melalui kegiatan pengamatan dan diskusi.</p>
-        </div>
+      <div class="section-header" style="background: #E3F2FD; margin-bottom: 1.5rem; display: flex; justify-content: center; text-align: center;">
+        <h4 style="color: #1565C0; margin: 0; font-size: 1.1rem;">Capaian Berdasarkan Elemen</h4>
       </div>
 
-      <!-- CP cards berwarna-warni -->
-      <p class="section-label">📌 Rincian Capaian Pembelajaran</p>
-      <div class="cp-cards">
-        <div class="cp-card" style="--cc:#667eea;">
-          <div class="cp-card-num">1</div>
-          <div class="cp-card-body">
-            <div class="cp-card-icon">👃</div>
-            <div>
-              <h4>Identifikasi Organ</h4>
-              <p>Mengidentifikasi <strong>organ-organ pernapasan</strong> pada manusia (hidung, tenggorokan, paru-paru).</p>
-            </div>
-          </div>
+      <div class="screen-hero" style="border-color:#1976D2; flex-direction: column; align-items: flex-start; gap: 1.2rem; padding: 1.5rem;">
+        <div style="width: 100%;">
+          <h4 style="font-size: 1.05rem; font-weight: 800; color: #1565C0; margin-bottom: 0.3rem;">Elemen :</h4>
+          <p style="font-size: 1rem; color: #2C3E50; font-weight: 700; margin: 0;">Pemahaman IPAS (Sains dan Sosial)</p>
         </div>
-        <div class="cp-card" style="--cc:#f5576c;">
-          <div class="cp-card-num">2</div>
-          <div class="cp-card-body">
-            <div class="cp-card-icon">⚙️</div>
-            <div>
-              <h4>Fungsi Organ</h4>
-              <p>Menjelaskan <strong>fungsi setiap organ</strong> pernapasan dalam proses bernapas.</p>
-            </div>
-          </div>
-        </div>
-        <div class="cp-card" style="--cc:#43e97b;">
-          <div class="cp-card-num">3</div>
-          <div class="cp-card-body">
-            <div class="cp-card-icon">🔄</div>
-            <div>
-              <h4>Proses Pernapasan</h4>
-              <p>Mendeskripsikan <strong>proses pernapasan</strong> manusia (inspirasi dan ekspirasi).</p>
-            </div>
-          </div>
-        </div>
-        <div class="cp-card" style="--cc:#fa8231;">
-          <div class="cp-card-num">4</div>
-          <div class="cp-card-body">
-            <div class="cp-card-icon">💪</div>
-            <div>
-              <h4>Jenis Pernapasan</h4>
-              <p>Membedakan <strong>jenis pernapasan</strong> (pernapasan dada dan perut).</p>
-            </div>
-          </div>
-        </div>
-        <div class="cp-card" style="--cc:#26c6da;">
-          <div class="cp-card-num">5</div>
-          <div class="cp-card-body">
-            <div class="cp-card-icon">🌿</div>
-            <div>
-              <h4>Pola Hidup Sehat</h4>
-              <p>Menerapkan <strong>pola hidup sehat</strong> untuk menjaga kesehatan organ pernapasan.</p>
-            </div>
-          </div>
+        
+        <div style="width: 100%; border-top: 2px dashed #BBDEFB; padding-top: 1.2rem;">
+          <h4 style="font-size: 1.05rem; font-weight: 800; color: #1565C0; margin-bottom: 0.5rem;">Capaian Pembelajaran :</h4>
+          <p style="font-size: 0.95rem; line-height: 1.6; color: #2C3E50; text-align: justify; margin: 0;">
+            Peserta didik dapat melakukan simulasi menggunakan gambar/bagan/alat/media sederhana tentang sistem organ tubuh manusia sistem pernapasan yang dikaitkan dengan cara menjaga kesehatan organ tubuhnya dengan benar.
+          </p>
         </div>
       </div>
     </div>
@@ -442,7 +436,7 @@
 
   <!-- ===================== SCREEN: TUJUAN PEMBELAJARAN ===================== -->
   <div id="screen-tujuan" class="screen content-screen">
-    <div class="wave-header" style="background: linear-gradient(135deg, #f5576c 0%, #f093fb 100%);">
+    <div class="wave-header" style="background: linear-gradient(135deg, #81C784, #388E3C);">
       <div class="wave-header-deco">
         <div class="hd-circle hd-c1"></div>
         <div class="hd-circle hd-c2"></div>
@@ -476,7 +470,7 @@
       <div class="tujuan-milestone">
         <div class="tm-item" style="--delay:0.05s; --tc:#f5576c;">
           <div class="tm-icon">👃</div>
-          <div class="tm-badge">T-1</div>
+          <div class="tm-badge">TP.1</div>
           <div class="tm-body">
             <h4>Organ Pernapasan</h4>
             <p>Menyebutkan minimal <strong>3 organ pernapasan</strong> manusia dengan benar.</p>
@@ -484,7 +478,7 @@
         </div>
         <div class="tm-item" style="--delay:0.1s; --tc:#4facfe;">
           <div class="tm-icon">🔵</div>
-          <div class="tm-badge">T-2</div>
+          <div class="tm-badge">TP.2</div>
           <div class="tm-body">
             <h4>Fungsi Hidung</h4>
             <p>Menjelaskan <strong>fungsi hidung</strong> sebagai penyaring udara dan organ pencium bau.</p>
@@ -492,7 +486,7 @@
         </div>
         <div class="tm-item" style="--delay:0.15s; --tc:#43e97b;">
           <div class="tm-icon">🗣️</div>
-          <div class="tm-badge">T-3</div>
+          <div class="tm-badge">TP.3</div>
           <div class="tm-body">
             <h4>Fungsi Tenggorokan</h4>
             <p>Menjelaskan <strong>fungsi tenggorokan</strong> sebagai jalur udara antara hidung dan paru-paru.</p>
@@ -500,7 +494,7 @@
         </div>
         <div class="tm-item" style="--delay:0.2s; --tc:#fa8231;">
           <div class="tm-icon">🫁</div>
-          <div class="tm-badge">T-4</div>
+          <div class="tm-badge">TP.4</div>
           <div class="tm-body">
             <h4>Peran Paru-Paru</h4>
             <p>Mendeskripsikan <strong>peran paru-paru</strong> dalam pertukaran oksigen dan karbon dioksida.</p>
@@ -508,7 +502,7 @@
         </div>
         <div class="tm-item" style="--delay:0.25s; --tc:#a55eea;">
           <div class="tm-icon">😮‍💨</div>
-          <div class="tm-badge">T-5</div>
+          <div class="tm-badge">TP.5</div>
           <div class="tm-body">
             <h4>Inspirasi &amp; Ekspirasi</h4>
             <p>Membedakan proses <strong>inspirasi (menghirup)</strong> dan <strong>ekspirasi (menghembuskan)</strong> udara.</p>
@@ -516,7 +510,7 @@
         </div>
         <div class="tm-item" style="--delay:0.3s; --tc:#26c6da;">
           <div class="tm-icon">💪</div>
-          <div class="tm-badge">T-6</div>
+          <div class="tm-badge">TP.6</div>
           <div class="tm-body">
             <h4>Jenis Pernapasan</h4>
             <p>Membedakan <strong>pernapasan dada</strong> dan <strong>pernapasan perut</strong> beserta mekanismenya.</p>
@@ -524,7 +518,7 @@
         </div>
         <div class="tm-item" style="--delay:0.35s; --tc:#fd9644;">
           <div class="tm-icon">✏️</div>
-          <div class="tm-badge">T-7</div>
+          <div class="tm-badge">TP.7</div>
           <div class="tm-body">
             <h4>Latihan Soal</h4>
             <p>Menjawab latihan soal dengan skor minimal <strong>70 dari 100</strong>.</p>
@@ -533,10 +527,67 @@
       </div>
     </div>
   </div>
+  <!-- ===================== SCREEN: PRETEST ===================== -->
+  <div id="screen-pretest-intro" class="screen content-screen">
+    <div class="wave-header" style="background: linear-gradient(135deg, #FF8A65, #E64A19);">
+      <div class="wave-header-deco"><div class="hd-circle hd-c1"></div><div class="hd-circle hd-c2"></div><div class="hd-circle hd-c3"></div></div>
+      <div class="wave-header-inner">
+        <button class="btn-wave-back" onclick="showScreen('screen-menu')">&#8592; Kembali</button>
+        <div class="wave-header-title"><h2>PreTest Materi</h2><p>Sistem Pernapasan Manusia</p></div>
+        <div class="wave-header-icon">📝</div>
+      </div>
+      <div class="wave-header-wave"><svg viewBox="0 0 1200 50" preserveAspectRatio="none"><path d="M0 30 Q300 0 600 25 Q900 50 1200 20 L1200 50 L0 50Z" fill="#F8FAFF"/></svg></div>
+    </div>
+    <div class="content-body">
+      <!-- Nama input -->
+      <div id="pretest-nama-step" class="quiz-nama-step">
+        <div class="quiz-nama-card" style="max-width: 600px;">
+          <div class="quiz-name-icon">✍️</div>
+          <h3 style="margin-bottom: 0.5rem; color: #E64A19; font-size: 1.4rem;">PRETEST IPA KELAS V SD</h3>
+          <p style="font-weight:700; margin-bottom: 1rem; color: #555;">Materi: Sistem Pernapasan Manusia</p>
+          
+          <div style="background: #FFF3E0; border-left: 4px solid #FF9800; padding: 1.2rem; border-radius: 8px; text-align: left; margin-bottom: 1.5rem;">
+            <h4 style="color: #E65100; margin-bottom: 0.5rem; font-size: 0.95rem;">Petunjuk Pengerjaan Pretest:</h4>
+            <ol style="margin-left: 1.2rem; font-size: 0.9rem; line-height: 1.6; color: #424242;">
+              <li>Tulislah nama, kelas, dan tanggal yang telah disediakan.</li>
+              <li>Bacalah setiap soal dengan cermat dan teliti sebelum menjawab.</li>
+              <li>Pilihlah satu jawaban yang paling benar pada huruf a, b, c, atau d.</li>
+              <li>Kerjakan soal secara mandiri tanpa bantuan teman.</li>
+              <li>Jika ada soal yang sulit, lewati terlebih dahulu dan kerjakan soal yang lebih mudah.</li>
+              <li>Periksa kembali jawaban sebelum dikumpulkan.</li>
+              <li>Dilarang menggunakan buku, catatan, atau alat bantu lainnya selama pretest berlangsung.</li>
+            </ol>
+          </div>
+
+          <input type="text" id="pretest-nama-input" placeholder="Ketik namamu di sini..." class="quiz-name-input" />
+          <button class="btn-primary" style="background: linear-gradient(135deg, #FF8A65, #E64A19);" onclick="startPretest()">Mulai Pretest! 🚀</button>
+        </div>
+      </div>
+
+      <!-- Soal -->
+      <div id="pretest-quiz-step" class="quiz-step" style="display: none;">
+        <div class="quiz-progress">
+          <span id="pretest-question-num">Soal 1 dari 10</span>
+          <div class="progress-bar">
+            <div class="progress-fill" id="pretest-progress-fill" style="background: #FF8A65;"></div>
+          </div>
+        </div>
+        <div class="quiz-card" style="border-top-color: #FF8A65;">
+          <p style="color: #666; font-size: 0.85rem; margin-bottom: 0.5rem; font-weight: bold;">Pilihlah jawaban yang paling tepat!</p>
+          <p class="quiz-question" id="pretest-question-text"></p>
+          <div class="quiz-options" id="pretest-options"></div>
+        </div>
+        <div class="quiz-nav">
+          <button class="btn-secondary" id="pretest-btn-prev" onclick="pretestPrev()" disabled>← Sebelumnya</button>
+          <button class="btn-primary" id="pretest-btn-next" style="background: linear-gradient(135deg, #FF8A65, #E64A19);" onclick="pretestNext()">Selanjutnya →</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <!-- ===================== SCREEN: MATERI MENU ===================== -->
   <div id="screen-materi" class="screen content-screen">
-    <div class="wave-header" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+    <div class="wave-header" style="background: linear-gradient(135deg, #FF8A65, #E64A19);">
       <div class="wave-header-deco">
         <div class="hd-circle hd-c1"></div>
         <div class="hd-circle hd-c2"></div>
@@ -564,30 +615,30 @@
           <p>Bernapas adalah proses menghirup oksigen (O₂) dan mengeluarkan karbon dioksida (CO₂). Pilih topik di bawah untuk mulai belajar!</p>
         </div>
       </div>
-      <p class="section-label">📚 Pilih Topik Materi</p>
+      <p class="section-label">📚 Pilih Materi secara berurutan agar kamu mudah memahaminya.</p>
       <div class="materi-topic-grid">
         <button class="materi-topic-card mtc-pembukaan" onclick="showScreen('screen-materi-pembukaan')">
           <div class="mtc-icon">🌬️</div>
-          <h3>Pembukaan</h3>
+          <h3>1. Pembukaan</h3>
           <p>Pengenalan sistem pernapasan</p>
           <span class="mtc-arrow">→</span>
         </button>
         <button class="materi-topic-card mtc-organ" onclick="showScreen('screen-materi-organ')">
           <div class="mtc-icon">🫁</div>
-          <h3>Organ Pernapasan</h3>
+          <h3>2. Organ Pernapasan</h3>
           <p>Hidung, tenggorokan, paru-paru</p>
           <span class="mtc-arrow">→</span>
         </button>
         <button class="materi-topic-card mtc-proses" onclick="showScreen('screen-materi-proses')">
           <div class="mtc-icon">🔄</div>
-          <h3>Proses Pernapasan</h3>
+          <h3>3. Proses Pernapasan</h3>
           <p>Inspirasi dan ekspirasi</p>
           <span class="mtc-arrow">→</span>
         </button>
-        <button class="materi-topic-card mtc-jenis" onclick="showScreen('screen-materi-jenis')">
-          <div class="mtc-icon">💪</div>
-          <h3>Jenis Pernapasan</h3>
-          <p>Pernapasan dada dan perut</p>
+        <button class="materi-topic-card mtc-jenis" onclick="showScreen('screen-materi-gangguan')">
+          <div class="mtc-icon">🛡️</div>
+          <h3>4. Gangguan & Cara Memelihara</h3>
+          <p>Merawat organ pernapasan kita</p>
           <span class="mtc-arrow">→</span>
         </button>
       </div>
@@ -913,94 +964,61 @@
     </div>
   </div>
 
-  <!-- ===================== SCREEN: JENIS PERNAPASAN ===================== -->
-  <div id="screen-materi-jenis" class="screen content-screen">
+  <!-- ===================== SCREEN: GANGGUAN & CARA MEMELIHARA ===================== -->
+  <div id="screen-materi-gangguan" class="screen content-screen">
     <div class="wave-header" style="background: linear-gradient(135deg, #fa8231 0%, #f7971e 100%);">
       <div class="wave-header-deco"><div class="hd-circle hd-c1"></div><div class="hd-circle hd-c2"></div><div class="hd-circle hd-c3"></div></div>
       <div class="wave-header-inner">
         <button class="btn-wave-back" onclick="showScreen('screen-materi')">&#8592; Kembali</button>
-        <div class="wave-header-title"><h2>Jenis Pernapasan</h2><p>Pernapasan Dada &amp; Perut</p></div>
-        <div class="wave-header-icon">💪</div>
+        <div class="wave-header-title"><h2>Gangguan & Cara Memelihara</h2><p>Organ Pernapasan Manusia</p></div>
+        <div class="wave-header-icon">🛡️</div>
       </div>
       <div class="wave-header-wave"><svg viewBox="0 0 1200 50" preserveAspectRatio="none"><path d="M0 30 Q300 0 600 25 Q900 50 1200 20 L1200 50 L0 50Z" fill="#F8FAFF"/></svg></div>
     </div>
     <div class="content-body">
-      <div class="jenis-grid">
-        <div class="jenis-card jenis-dada">
-          <div class="jenis-icon">💨</div>
-          <h3>Pernapasan Dada</h3>
-          <div class="jenis-badge">Otot Antar Tulang Rusuk</div>
-          <div class="jenis-detail">
-            <h4>Mekanisme Inspirasi:</h4>
-            <ul>
-              <li>Otot antar tulang rusuk <strong>berkontraksi</strong></li>
-              <li>Tulang rusuk terangkat ke atas dan keluar</li>
-              <li>Rongga dada membesar → udara masuk</li>
-            </ul>
-            <h4>Mekanisme Ekspirasi:</h4>
-            <ul>
-              <li>Otot antar tulang rusuk <strong>berelaksasi</strong></li>
-              <li>Tulang rusuk turun kembali</li>
-              <li>Rongga dada mengecil → udara keluar</li>
-            </ul>
-          </div>
-        </div>
-        <div class="jenis-card jenis-perut">
-          <div class="jenis-icon">🌬️</div>
-          <h3>Pernapasan Perut</h3>
-          <div class="jenis-badge">Otot Diafragma</div>
-          <div class="jenis-detail">
-            <h4>Mekanisme Inspirasi:</h4>
-            <ul>
-              <li>Otot diafragma <strong>berkontraksi</strong> (mendatar)</li>
-              <li>Rongga perut tertekan ke bawah</li>
-              <li>Rongga dada membesar → udara masuk</li>
-            </ul>
-            <h4>Mekanisme Ekspirasi:</h4>
-            <ul>
-              <li>Otot diafragma <strong>berelaksasi</strong> (melengkung)</li>
-              <li>Rongga perut naik kembali</li>
-              <li>Rongga dada mengecil → udara keluar</li>
-            </ul>
-          </div>
+      <div class="screen-hero" style="border-color:#fa8231; margin-bottom: 2rem;">
+        <div class="screen-hero-icon">🤧</div>
+        <div>
+          <h3>Macam-Macam Gangguan Pernapasan</h3>
+          <p>Udara kotor dan bibit penyakit dapat menyebabkan gangguan pada organ pernapasan. Berikut contohnya:</p>
         </div>
       </div>
-      <div class="compare-box">
-        <h3>📊 Perbandingan</h3>
-        <div class="compare-table">
-          <div class="compare-row compare-header">
-            <span>Aspek</span>
-            <span>Pernapasan Dada</span>
-            <span>Pernapasan Perut</span>
-          </div>
-          <div class="compare-row">
-            <span>Otot yang bekerja</span>
-            <span>Otot antar tulang rusuk</span>
-            <span>Otot diafragma</span>
-          </div>
-          <div class="compare-row">
-            <span>Volume udara</span>
-            <span>Lebih sedikit</span>
-            <span>Lebih banyak</span>
-          </div>
-          <div class="compare-row">
-            <span>Umum pada</span>
-            <span>Wanita</span>
-            <span>Pria</span>
-          </div>
-          <div class="compare-row">
-            <span>Efisiensi</span>
-            <span>Kurang efisien</span>
-            <span>Lebih efisien</span>
-          </div>
+
+      <div class="gangguan-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
+        <div style="background: white; border-radius: 12px; padding: 1.5rem; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border-left: 4px solid #ff4757;">
+          <h4 style="color: #ff4757; font-size: 1.1rem; margin-bottom: 0.5rem;">🤒 Influenza (Flu)</h4>
+          <p style="font-size: 0.95rem; line-height: 1.5;">Penyakit yang disebabkan oleh virus. Gejalanya demam, bersin-bersin, pilek, dan sakit kepala.</p>
         </div>
+        <div style="background: white; border-radius: 12px; padding: 1.5rem; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border-left: 4px solid #2ed573;">
+          <h4 style="color: #2ed573; font-size: 1.1rem; margin-bottom: 0.5rem;">😮‍💨 Asma</h4>
+          <p style="font-size: 0.95rem; line-height: 1.5;">Penyumbatan saluran pernapasan yang disebabkan oleh debu, udara dingin, atau alergi. Membuat penderita sesak napas.</p>
+        </div>
+        <div style="background: white; border-radius: 12px; padding: 1.5rem; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border-left: 4px solid #ffa502;">
+          <h4 style="color: #ffa502; font-size: 1.1rem; margin-bottom: 0.5rem;">🗣️ Bronkitis</h4>
+          <p style="font-size: 0.95rem; line-height: 1.5;">Infeksi atau peradangan pada cabang tenggorokan (bronkus). Gejalanya batuk berdahak dan demam.</p>
+        </div>
+        <div style="background: white; border-radius: 12px; padding: 1.5rem; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border-left: 4px solid #3742fa;">
+          <h4 style="color: #3742fa; font-size: 1.1rem; margin-bottom: 0.5rem;">🦠 TBC (Tuberkulosis)</h4>
+          <p style="font-size: 0.95rem; line-height: 1.5;">Penyakit paru-paru menular yang disebabkan oleh bakteri <i>Mycobacterium tuberculosis</i>. Membuat napas terengah-engah.</p>
+        </div>
+      </div>
+
+      <div class="cara-memelihara-box" style="background: #E3F2FD; border-radius: 15px; padding: 1.5rem;">
+        <h3 style="color: #1565C0; margin-bottom: 1rem; text-align: center; display: flex; align-items: center; justify-content: center; gap: 0.5rem;"><span style="font-size:1.5rem;">🛡️</span> Cara Memelihara Kesehatan Organ Pernapasan</h3>
+        <ul style="font-size: 1rem; line-height: 1.6; color: #333; margin-left: 1rem;">
+          <li style="margin-bottom: 0.5rem;"><b>Makan makanan bergizi</b> agar daya tahan tubuh kita tetap terjaga dengan baik.</li>
+          <li style="margin-bottom: 0.5rem;"><b>Berolahraga secara teratur</b> supaya alat-alat pernapasan terlatih dengan baik sehingga dapat bernapas ringan.</li>
+          <li style="margin-bottom: 0.5rem;"><b>Menjaga kebersihan lingkungan rumah</b> dengan memastikan ada ventilasi udara yang cukup.</li>
+          <li style="margin-bottom: 0.5rem;"><b>Menggunakan masker</b> ketika bepergian ke luar rumah atau saat berada di lingkungan yang berdebu/polusi.</li>
+          <li style="margin-bottom: 0.5rem;"><b>Menghindari lingkungan berasap</b>, terutama asap rokok maupun asap kendaraan bermotor.</li>
+        </ul>
       </div>
     </div>
   </div>
 
   <!-- ===================== SCREEN: VIDEO ===================== -->
   <div id="screen-video" class="screen content-screen">
-    <div class="wave-header" style="background: linear-gradient(135deg, #f12711 0%, #f5af19 100%);">
+    <div class="wave-header" style="background: linear-gradient(135deg, #F06292, #C2185B);">
       <div class="wave-header-deco"><div class="hd-circle hd-c1"></div><div class="hd-circle hd-c2"></div><div class="hd-circle hd-c3"></div></div>
       <div class="wave-header-inner">
         <button class="btn-wave-back" onclick="showScreen('screen-menu')">&#8592; Kembali</button>
@@ -1017,18 +1035,27 @@
       <div class="video-container">
         <iframe
           id="youtube-video"
-          src="https://www.youtube.com/embed/mqwj6eqIyuA?si=0cJltiEZnnqzL8Qt&autoplay=1"
-          title="Sistem Pernapasan Manusia - Video Pembelajaran"
+          src="https://www.youtube.com/embed/YLJoVWq3uOA?si=0cJltiEZnnqzL8Qt"
+          title="Sistem Pernapasan Manusia Kelas 5 SD - Video Pembelajaran"
           frameborder="0"
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
           referrerpolicy="strict-origin-when-cross-origin"
           allowfullscreen>
         </iframe>
+        <p style="font-size:0.85rem; color:#777; text-align:center; margin-top:0.8rem; font-style:italic;">Sumber: Channel YouTube Guru Berto (Video IPAS Kelas 5 SD)</p>
       </div>
-      <div class="video-fallback">
-        <a id="youtube-link" href="https://www.youtube.com/watch?v=mqwj6eqIyuA" target="_blank" class="btn-primary" style="width:100%; margin-bottom: 1.5rem; gap: 0.5rem;">
+      <div class="video-fallback" style="margin-top: 1rem;">
+        <a id="youtube-link" href="https://www.youtube.com/watch?v=YLJoVWq3uOA" target="_blank" class="btn-primary" style="width:100%; margin-bottom: 1.5rem; gap: 0.5rem; background: linear-gradient(135deg, #F06292, #C2185B);">
           <span>🌐 Tonton Langsung di YouTube</span>
         </a>
+      </div>
+
+      <!-- KOTAK ISIAN PENDAPAT SISWA -->
+      <div class="video-opinion-box" style="margin-top: 1.5rem; background: #FFEBEE; border-radius: 12px; padding: 1.5rem; border-left: 4px solid #D32F2F;">
+        <h3 style="color: #C2185B; margin-bottom: 0.5rem; font-size: 1.1rem;">✍️ Sampaikan Pendapatmu</h3>
+        <p style="font-size: 0.9rem; color: #424242; margin-bottom: 1rem;">Setelah menonton video di atas, tuliskan pendapatmu atau hal baru yang kamu pelajari!</p>
+        <textarea id="video-opinion-input" class="essay-textarea" style="width: 100%; min-height: 100px; padding: 1rem; border: 2px solid #F48FB1; border-radius: 8px; margin-bottom: 1rem; font-family: inherit;" placeholder="Ketik pendapatmu di sini..."></textarea>
+        <button class="btn-primary" style="background: linear-gradient(135deg, #F06292, #C2185B); border:none; box-shadow: 0 4px 15px rgba(240, 98, 146, 0.4);" onclick="submitPendapat()">Kirim Pendapat 🚀</button>
       </div>
       <div class="video-notes">
         <h4>📝 Yang perlu diperhatikan saat menonton:</h4>
@@ -1067,7 +1094,7 @@
 
   <!-- ===================== SCREEN: RANGKUMAN ===================== -->
   <div id="screen-rangkuman" class="screen content-screen">
-    <div class="wave-header" style="background: linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%);">
+    <div class="wave-header" style="background: linear-gradient(135deg, #BA68C8, #7B1FA2);">
       <div class="wave-header-deco"><div class="hd-circle hd-c1"></div><div class="hd-circle hd-c2"></div><div class="hd-circle hd-c3"></div></div>
       <div class="wave-header-inner">
         <button class="btn-wave-back" onclick="showScreen('screen-menu')">&#8592; Kembali</button>
@@ -1118,16 +1145,16 @@
 
       <div class="rangkuman-section">
         <div class="section-header" style="background: #FFF3E0;">
-          <span>💪</span> <h4>3. Jenis Pernapasan</h4>
+          <span>🛡️</span> <h4>3. Gangguan & Cara Memelihara</h4>
         </div>
         <div class="rangkuman-two-col">
           <div class="col-card" style="border-color: #FF9800;">
-            <h5>🫀 Pernapasan Dada</h5>
-            <p>Otot antar tulang rusuk, volume lebih sedikit</p>
+            <h5>🤧 Gangguan Pernapasan</h5>
+            <p>Flu, Asma, Bronkitis, TBC (Virus/Bakteri/Debu)</p>
           </div>
           <div class="col-card" style="border-color: #9C27B0;">
-            <h5>🫃 Pernapasan Perut</h5>
-            <p>Otot diafragma, volume lebih banyak, lebih efisien</p>
+            <h5>🛡️ Pemeliharaan</h5>
+            <p>Makan bergizi, olahraga, pakai masker, hindari asap</p>
           </div>
         </div>
       </div>
@@ -1145,6 +1172,14 @@
         </ul>
       </div>
 
+      <!-- Kotak Refleksi Siswa -->
+      <div class="refleksi-box" style="margin-top: 2rem; margin-bottom: 1.5rem; background: #F3E5F5; border-radius: 12px; padding: 1.5rem; border-left: 4px solid #8E24AA;">
+        <h3 style="color: #7B1FA2; margin-bottom: 0.5rem; font-size: 1.1rem;">🌟 Refleksi Pembelajaran</h3>
+        <p style="font-size: 0.9rem; color: #424242; margin-bottom: 1rem;">Bagaimana perasaanmu belajar hari ini? Materi apa yang paling seru/berkesan?</p>
+        <textarea id="rangkuman-refleksi-input" class="essay-textarea" style="width: 100%; min-height: 100px; padding: 1rem; border: 2px solid #ce93d8; border-radius: 8px; margin-bottom: 1rem; font-family: inherit;" placeholder="Tulis isian refleksimu di sini..."></textarea>
+        <button class="btn-primary" style="background: linear-gradient(135deg, #BA68C8, #7B1FA2); border:none;" onclick="submitRefleksi()">Simpan Refleksi 💡</button>
+      </div>
+
       <button class="btn-primary" onclick="showScreen('screen-latihan-menu')" style="width:100%; margin-top: 1rem;">
         ✏️ Kerjakan Latihan Soal!
       </button>
@@ -1153,7 +1188,7 @@
 
   <!-- ===================== SCREEN: LATIHAN MENU ===================== -->
   <div id="screen-latihan-menu" class="screen content-screen">
-    <div class="wave-header" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);">
+    <div class="wave-header" style="background: linear-gradient(135deg, #FFD54F, #F57F17);">
       <div class="wave-header-deco"><div class="hd-circle hd-c1"></div><div class="hd-circle hd-c2"></div><div class="hd-circle hd-c3"></div></div>
       <div class="wave-header-inner">
         <button class="btn-wave-back" onclick="showScreen('screen-menu')">&#8592; Kembali</button>
@@ -1167,23 +1202,14 @@
         <div class="screen-hero-icon">🏆</div>
         <div>
           <h3>Siap Uji Kemampuanmu?</h3>
-          <p>Pilih jenis latihan soal yang ingin kamu kerjakan. Selamat mengerjakan!</p>
+          <p>Lakukan Post Test di bawah ini untuk melihat sejauh mana pemahamanmu!</p>
         </div>
       </div>
-      <div class="latihan-choices">
-        <button class="latihan-choice-card" onclick="startQuiz('pg')">
+      <div class="latihan-choices" style="display:flex; justify-content:center;">
+        <button class="latihan-choice-card" onclick="startQuiz('pg')" style="max-width:400px; width:100%;">
           <div class="lc-icon">📋</div>
-          <h3>Pilihan Ganda</h3>
-          <p>10 soal pilihan ganda</p>
-          <div class="lc-meta">
-            <span>⏱️ Waktu bebas</span>
-            <span>🎯 Skor maks: 100</span>
-          </div>
-        </button>
-        <button class="latihan-choice-card" onclick="startQuiz('essay')">
-          <div class="lc-icon">✍️</div>
-          <h3>Essay Terbatas</h3>
-          <p>5 soal isian singkat</p>
+          <h3>Post Test (Pilihan Ganda)</h3>
+          <p>10 soal interaktif pilihan ganda</p>
           <div class="lc-meta">
             <span>⏱️ Waktu bebas</span>
             <span>🎯 Skor maks: 100</span>
@@ -1195,7 +1221,7 @@
 
   <!-- ===================== SCREEN: LATIHAN PG ===================== -->
   <div id="screen-latihan-pg" class="screen content-screen">
-    <div class="wave-header" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+    <div class="wave-header" style="background: linear-gradient(135deg, #FFD54F, #F57F17);">
       <div class="wave-header-deco"><div class="hd-circle hd-c1"></div><div class="hd-circle hd-c2"></div><div class="hd-circle hd-c3"></div></div>
       <div class="wave-header-inner">
         <button class="btn-wave-back" onclick="confirmBack()">&#8592; Kembali</button>
@@ -1228,52 +1254,12 @@
           <p class="quiz-question" id="pg-question-text"></p>
           <div class="quiz-options" id="pg-options"></div>
         </div>
-        <div class="quiz-nav">
-          <button class="btn-secondary" id="pg-btn-prev" onclick="pgPrev()" disabled>← Sebelumnya</button>
-          <button class="btn-primary" id="pg-btn-next" onclick="pgNext()">Selanjutnya →</button>
-        </div>
+        <!-- Navigation hidden for Quizizz style auto progress -->
       </div>
     </div>
   </div>
 
-  <!-- ===================== SCREEN: LATIHAN ESSAY ===================== -->
-  <div id="screen-latihan-essay" class="screen content-screen">
-    <div class="content-header" style="background: linear-gradient(135deg, #43e97b, #38f9d7);">
-      <button class="btn-back" onclick="confirmBack()">← Kembali</button>
-      <h2>✍️ Essay Terbatas</h2>
-    </div>
-    <div class="content-body">
-      <!-- Nama input -->
-      <div id="essay-nama-step" class="quiz-nama-step">
-        <div class="quiz-nama-card">
-          <div class="quiz-name-icon">✍️</div>
-          <h3>Masukkan Namamu</h3>
-          <p>Nama akan tercantum di hasil nilai kamu!</p>
-          <input type="text" id="essay-nama-input" placeholder="Ketik namamu di sini..." class="quiz-name-input" />
-          <button class="btn-primary" onclick="startEssayQuiz()">Mulai Mengerjakan! 🚀</button>
-        </div>
-      </div>
-
-      <!-- Soal -->
-      <div id="essay-quiz-step" class="quiz-step" style="display: none;">
-        <div class="quiz-progress">
-          <span id="essay-question-num">Soal 1 dari 5</span>
-          <div class="progress-bar">
-            <div class="progress-fill" id="essay-progress-fill"></div>
-          </div>
-        </div>
-        <div class="quiz-card">
-          <p class="quiz-question" id="essay-question-text"></p>
-          <textarea id="essay-answer-input" class="essay-textarea" placeholder="Tulis jawabanmu di sini..."></textarea>
-          <div class="essay-hint" id="essay-hint"></div>
-        </div>
-        <div class="quiz-nav">
-          <button class="btn-secondary" id="essay-btn-prev" onclick="essayPrev()" disabled>← Sebelumnya</button>
-          <button class="btn-primary" id="essay-btn-next" onclick="essayNext()">Selanjutnya →</button>
-        </div>
-      </div>
-    </div>
-  </div>
+  <!-- ESSAY SCREEN DIBUANG -->
 
   <!-- ===================== SCREEN: HASIL SKOR ===================== -->
   <div id="screen-skor" class="screen content-screen">
@@ -1351,20 +1337,21 @@
           <div class="rujukan-num">4</div>
           <div class="rujukan-detail">
             <h4>Video Pembelajaran</h4>
-            <p>Ruang Guru. (2022). <em>Sistem Pernapasan Manusia – IPAS Kelas 5 SD</em>. YouTube. Diakses dari https://www.youtube.com</p>
+            <p>Youtube (Channel Guru Berto). (2022). <em>Sistem Pernapasan Manusia - Kelas 5 SD</em>. YouTube. Disesuaikan dengan tautan video pada menu pembelajaran (https://www.youtube.com/watch?v=YLJoVWq3uOA, dsb).</p>
           </div>
         </div>
       </div>
       <div class="developer-card">
         <h4>👨‍💻 Pengembang Media</h4>
-        <p>Media pembelajaran interaktif ini dikembangkan untuk mata pelajaran IPAS, materi Sistem Pernapasan Manusia, Kelas 5 SD/MI.</p>
-        <p><strong>Tahun Pengembangan:</strong> 2025</p>
+        <p><strong>Deden Supriatna</strong></p>
+        <p>Mahasiswa Magister Teknologi Pendidikan,<br/>Universitas Ibnu Khaldun Bogor.</p>
+        <p style="margin-top: 0.5rem; font-size: 0.85rem; color: #555;">Media pembelajaran interaktif ini dikembangkan untuk mata pelajaran IPAS, materi Sistem Pernapasan Manusia, Kelas 5 SD/MI.</p>
       </div>
     </div>
   </div>
 
   <!-- Floating Audio Toggle -->
-  <button id="btn-audio-toggle" class="audio-fab" onclick="AudioManager.toggleMute()" title="Matikan Musik">🔊</button>
+  <button id="btn-audio-toggle" class="audio-fab" onclick="AudioManager.toggleMute()" title="Nyalakan Musik">🔇</button>
 
   <!-- Toast Notification -->
   <div id="toast" class="toast"></div>

@@ -40,7 +40,7 @@ const AudioManager = (() => {
   });
 
   let current  = null;   // key: 'menu' | 'materi' | null
-  let muted    = false;  // default: musik NYALA otomatis
+  let muted    = true;   // default: musik MATI, tekan tombol untuk menyalakan
   const TARGET_VOL = 0.4;
   const FADE_MS    = 800;
 
@@ -104,6 +104,23 @@ const AudioManager = (() => {
     updateBtn();
   }
 
+  const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  function playClick() {
+    if (muted) return;
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(800, audioCtx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(1200, audioCtx.currentTime + 0.05);
+    gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    osc.start(audioCtx.currentTime);
+    osc.stop(audioCtx.currentTime + 0.1);
+  }
+
   function updateBtn() {
     const btn = document.getElementById('btn-audio-toggle');
     if (!btn) return;
@@ -111,7 +128,34 @@ const AudioManager = (() => {
     btn.title = muted ? 'Aktifkan Musik' : 'Matikan Musik';
   }
 
-  return { play, toggleMute };
+  function playScoreSound(score) {
+    if (muted) return;
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    
+    if (score >= 60) {
+      // Happy fanfare
+      osc.type = 'square';
+      osc.frequency.setValueAtTime(400, audioCtx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(800, audioCtx.currentTime + 0.1);
+      osc.frequency.exponentialRampToValueAtTime(1200, audioCtx.currentTime + 0.2);
+    } else {
+      // Sad trombone
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(300, audioCtx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(150, audioCtx.currentTime + 0.3);
+    }
+    
+    gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    osc.start(audioCtx.currentTime);
+    osc.stop(audioCtx.currentTime + 0.4);
+  }
+
+  return { play, toggleMute, playClick, playScoreSound };
 })();
 
 
@@ -212,109 +256,160 @@ function changeVideo(videoId, el) {
 // ============================================
 // QUIZ DATA
 // ============================================
-const pgQuestions = [
-  {
-    q: "1. Organ pernapasan yang berfungsi sebagai tempat pertukaran oksigen (O₂) dan karbon dioksida (CO₂) adalah ...",
-    options: ["Hidung", "Tenggorokan", "Paru-paru", "Jantung"],
-    answer: 2,
-    feedback: "✅ Benar! Paru-paru adalah tempat pertukaran gas O₂ dan CO₂ melalui alveolus."
-  },
-  {
-    q: "2. Proses menghirup udara masuk ke dalam paru-paru disebut ...",
-    options: ["Ekspirasi", "Inspirasi", "Respirasi", "Oksidasi"],
-    answer: 1,
-    feedback: "✅ Benar! Inspirasi adalah proses menghirup udara (masuk ke paru-paru)."
-  },
-  {
-    q: "3. Rambut-rambut halus dalam hidung berfungsi untuk ...",
-    options: [
-      "Menghasilkan suara",
-      "Menyerap oksigen",
-      "Menyaring debu dan kotoran dalam udara",
-      "Memompa darah"
-    ],
-    answer: 2,
-    feedback: "✅ Benar! Rambut halus (silia) di hidung menyaring debu dan kotoran agar tidak masuk ke paru-paru."
-  },
-  {
-    q: "4. Pernapasan yang menggunakan otot diafragma disebut pernapasan ...",
-    options: ["Dada", "Perut", "Hidung", "Paru-paru"],
-    answer: 1,
-    feedback: "✅ Benar! Pernapasan perut menggunakan otot diafragma sebagai penggeraknya."
-  },
-  {
-    q: "5. Kandungan gas yang paling banyak dalam udara yang kita HIRUP adalah ...",
-    options: ["Karbon dioksida (CO₂)", "Uap air", "Oksigen (O₂)", "Nitrogen (N₂)"],
-    answer: 3,
-    feedback: "✅ Tepat! Udara yang kita hirup mengandung sekitar 78% nitrogen, 21% oksigen, dan sisanya gas lain."
-  },
-  {
-    q: "6. Bagian tenggorokan yang berfungsi menghasilkan suara adalah ...",
-    options: ["Trakea", "Bronkus", "Laring (kotak suara)", "Alveolus"],
-    answer: 2,
-    feedback: "✅ Benar! Laring atau kotak suara adalah bagian atas tenggorokan yang menghasilkan suara."
-  },
-  {
-    q: "7. Saat inspirasi (menghirup), apa yang terjadi pada rongga dada?",
-    options: [
-      "Rongga dada mengecil",
-      "Rongga dada membesar",
-      "Rongga dada tidak berubah",
-      "Rongga dada bergetar"
-    ],
-    answer: 1,
-    feedback: "✅ Benar! Saat inspirasi, rongga dada membesar sehingga tekanan turun dan udara masuk."
-  },
-  {
-    q: "8. Kantung udara kecil dalam paru-paru tempat pertukaran gas disebut ...",
-    options: ["Bronkus", "Trakea", "Alveolus", "Laring"],
-    answer: 2,
-    feedback: "✅ Benar! Alveolus adalah kantung-kantung udara kecil di ujung bronkiolus tempat O₂ dan CO₂ bertukar."
-  },
-  {
-    q: "9. Paru-paru kiri manusia terdiri dari berapa lobus?",
-    options: ["1 lobus", "2 lobus", "3 lobus", "4 lobus"],
-    answer: 1,
-    feedback: "✅ Benar! Paru-paru kiri memiliki 2 lobus, sedikit lebih kecil karena berdampingan dengan jantung."
-  },
-  {
-    q: "10. Berapa kali rata-rata manusia bernapas dalam satu menit?",
-    options: ["1–5 kali", "5–10 kali", "12–20 kali", "30–40 kali"],
-    answer: 2,
-    feedback: "✅ Tepat! Rata-rata manusia bernapas 12–20 kali per menit dalam kondisi normal."
+let pretestDone = false;
+function checkPretest() {
+  if (pretestDone) {
+    showScreen('screen-materi');
+  } else {
+    showScreen('screen-pretest-intro');
   }
+}
+
+const pretestQuestions = [
+  { q: "1. Organ utama dalam sistem pernapasan manusia adalah ...", options: ["Jantung", "Paru-paru", "Hati", "Ginjal"], answer: 1 },
+  { q: "2. Udara pertama kali masuk ke dalam tubuh melalui ...", options: ["Paru-paru", "Hidung", "Bronkus", "Trakea"], answer: 1 },
+  { q: "3. Fungsi hidung dalam proses pernapasan adalah ...", options: ["Mengedarkan darah", "Menyaring udara yang masuk", "Memompa oksigen", "Menyerap sari makanan"], answer: 1 },
+  { q: "4. Saluran yang menghubungkan hidung dengan paru-paru disebut ...", options: ["Kerongkongan", "Trakea", "Usus", "Lambung"], answer: 1 },
+  { q: "5. Proses masuknya udara ke dalam paru-paru disebut ...", options: ["Ekspirasi", "Inspirasi", "Difusi", "Sirkulasi"], answer: 1 },
+  { q: "6. Proses keluarnya udara dari paru-paru disebut ...", options: ["Inspirasi", "Ekspirasi", "Respirasi", "Transpirasi"], answer: 1 },
+  { q: "7. Tempat terjadinya pertukaran oksigen dan karbon dioksida adalah ...", options: ["Bronkus", "Trakea", "Alveolus", "Hidung"], answer: 2 },
+  { q: "8. Gas yang dibutuhkan tubuh saat bernapas adalah ...", options: ["Karbon dioksida", "Nitrogen", "Oksigen", "Uap air"], answer: 2 },
+  { q: "9. Otot yang berperan penting dalam proses pernapasan adalah ...", options: ["Otot tangan", "Otot kaki", "Diafragma", "Otot perut"], answer: 2 },
+  { q: "10. Salah satu cara menjaga kesehatan sistem pernapasan adalah ...", options: ["Menghirup asap kendaraan", "Merokok", "Berolahraga secara teratur", "Tidur larut malam setiap hari"], answer: 2 }
 ];
 
-const essayQuestions = [
+function setPretestAnswer(optIdx) {
+  state.quiz.answers[state.quiz.currentIndex] = optIdx;
+  document.querySelectorAll('#pretest-options .quiz-option').forEach((btn, i) => {
+    btn.classList.toggle('selected', i === optIdx);
+  });
+  document.getElementById('pretest-btn-next').disabled = false;
+  AudioManager.playClick();
+}
+
+function renderPretestQuestion() {
+  const idx = state.quiz.currentIndex;
+  const q = pretestQuestions[idx];
+  const total = pretestQuestions.length;
+
+  document.getElementById('pretest-question-num').textContent = `Soal ${idx + 1} dari ${total}`;
+  document.getElementById('pretest-progress-fill').style.width = `${((idx + 1) / total) * 100}%`;
+  document.getElementById('pretest-question-text').textContent = q.q;
+
+  const container = document.getElementById('pretest-options');
+  container.innerHTML = '';
+  const labels = ['a', 'b', 'c', 'd'];
+  q.options.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'quiz-option';
+    btn.innerHTML = `<span class="option-label">${labels[i]}.</span> ${opt}`;
+    if (state.quiz.answers[idx] === i) btn.classList.add('selected');
+    btn.onclick = () => setPretestAnswer(i);
+    container.appendChild(btn);
+  });
+
+  document.getElementById('pretest-btn-prev').disabled = idx === 0;
+  document.getElementById('pretest-btn-next').textContent = (idx === total - 1) ? 'Selesai & Kumpulkan' : 'Selanjutnya →';
+  document.getElementById('pretest-btn-next').disabled = state.quiz.answers[idx] === undefined;
+}
+
+function startPretest() {
+  const nama = document.getElementById('pretest-nama-input').value.trim();
+  if (!nama) { showToast('❗ Tulis namamu dulu ya!'); return; }
+  state.quiz.namaTemp = nama;
+  state.quiz.type = 'pretest';
+  state.quiz.currentIndex = 0;
+  state.quiz.answers = new Array(pretestQuestions.length);
+  document.getElementById('pretest-nama-step').style.display = 'none';
+  document.getElementById('pretest-quiz-step').style.display = 'block';
+  renderPretestQuestion();
+}
+
+function pretestPrev() {
+  if (state.quiz.currentIndex > 0) {
+    state.quiz.currentIndex--;
+    renderPretestQuestion();
+    AudioManager.playClick();
+  }
+}
+
+function pretestNext() {
+  AudioManager.playClick();
+  if (state.quiz.currentIndex < pretestQuestions.length - 1) {
+    state.quiz.currentIndex++;
+    renderPretestQuestion();
+  } else {
+    // Finish
+    let correct = 0;
+    pretestQuestions.forEach((q, i) => {
+      if (state.quiz.answers[i] === q.answer) correct++;
+    });
+    pretestDone = true;
+    const score = Math.round((correct / pretestQuestions.length) * 100);
+    showScore(score, 'PreTest IPA', correct, pretestQuestions.length);
+  }
+}
+
+const pgQuestions = [
   {
-    q: "1. Sebutkan 3 organ pernapasan utama pada manusia!",
-    hint: "💡 Petunjuk: Pikirkan jalur udara dari luar sampai ke dalam tubuh...",
-    keywords: ["hidung", "tenggorokan", "paru", "trakea", "laring"],
-    modelAnswer: "Hidung, tenggorokan (trakea), dan paru-paru."
+    q: "1. Organ utama tempat pertukaran oksigen dan karbon dioksida adalah ...",
+    options: ["Jantung", "Paru-paru", "Hidung", "Lambung"],
+    answer: 1,
+    feedback: "✅ Benar! Paru-paru adalah organ utama pertukaran gas."
   },
   {
-    q: "2. Jelaskan apa yang dimaksud dengan inspirasi dalam proses pernapasan!",
-    hint: "💡 Petunjuk: Inspirasi berhubungan dengan gerakan udara masuk...",
-    keywords: ["menghirup", "masuk", "oksigen", "rongga", "membesar", "tekanan turun"],
-    modelAnswer: "Inspirasi adalah proses menghirup udara yang mengandung oksigen ke dalam paru-paru. Saat inspirasi, rongga dada membesar dan tekanan udara menurun sehingga udara dari luar masuk ke paru-paru."
+    q: "2. Bagian yang menghubungkan trakea dengan paru-paru disebut ...",
+    options: ["Bronkus", "Alveolus", "Diafragma", "Laring"],
+    answer: 0,
+    feedback: "✅ Benar! Bronkus merupakan cabang batang tenggorokan (trakea) yang menuju paru-paru."
   },
   {
-    q: "3. Apa perbedaan antara pernapasan dada dan pernapasan perut?",
-    hint: "💡 Petunjuk: Perhatikan otot yang berperan di masing-masing jenis pernapasan...",
-    keywords: ["dada", "perut", "diafragma", "tulang rusuk", "otot"],
-    modelAnswer: "Pernapasan dada menggunakan otot antar tulang rusuk, sedangkan pernapasan perut menggunakan otot diafragma. Pernapasan perut lebih efisien dan menghasilkan volume udara yang lebih banyak."
+    q: "3. Proses menghirup udara disebut ...",
+    options: ["Ekspirasi", "Inspirasi", "Respirasi", "Transpirasi"],
+    answer: 1,
+    feedback: "✅ Benar! Inspirasi adalah proses masuknya udara ke dalam paru-paru (menghirup udara)."
   },
   {
-    q: "4. Mengapa udara perlu dihangatkan oleh hidung sebelum masuk ke paru-paru?",
-    hint: "💡 Petunjuk: Pikirkan tentang kondisi alat pernapasan dalam tubuh kita...",
-    keywords: ["hangat", "suhu", "tubuh", "rusak", "paru", "selaput"],
-    modelAnswer: "Udara perlu dihangatkan agar suhunya sesuai dengan suhu tubuh. Jika udara terlalu dingin langsung masuk ke paru-paru, dapat merusak selaput-selaput halus di dalam paru-paru."
+    q: "4. Bagian paru-paru yang berbentuk gelembung kecil tempat pertukaran gas adalah ...",
+    options: ["Bronkus", "Alveolus", "Trakea", "Diafragma"],
+    answer: 1,
+    feedback: "✅ Benar! Alveolus adalah gelembung halus tempat pertukaran oksigen dan karbon dioksida."
   },
   {
-    q: "5. Apa fungsi alveolus dalam sistem pernapasan manusia?",
-    hint: "💡 Petunjuk: Alveolus adalah bagian terkecil dari paru-paru...",
-    keywords: ["pertukaran", "oksigen", "karbon dioksida", "darah", "serap", "gas"],
-    modelAnswer: "Alveolus berfungsi sebagai tempat terjadinya pertukaran gas antara oksigen (O₂) dan karbon dioksida (CO₂). Oksigen diserap ke dalam darah melalui dinding alveolus, sedangkan karbon dioksida dari darah dikeluarkan ke alveolus untuk dibuang saat ekspirasi."
+    q: "5. Otot yang membantu proses pernapasan dengan bergerak naik turun adalah ...",
+    options: ["Otot lengan", "Otot perut", "Diafragma", "Otot jantung"],
+    answer: 2,
+    feedback: "✅ Tepat sekali! Diafragma adalah otot utama penyekat rongga dada dan perut."
+  },
+  {
+    q: "6. Gas yang dikeluarkan tubuh saat bernapas adalah ...",
+    options: ["Oksigen", "Karbon dioksida", "Nitrogen", "Hidrogen"],
+    answer: 1,
+    feedback: "✅ Benar! Sisa pertukaran gas yang kita buang (hembuskan) adalah Karbon Dioksida."
+  },
+  {
+    q: "7. Salah satu gangguan pada organ pernapasan yang disebabkan oleh alergi debu adalah ...",
+    options: ["Asma", "Bronkitis", "Influenza", "Tuberkulosis"],
+    answer: 0,
+    feedback: "✅ Benar! Asma merupakan penyempitan saluran pernapasan akibat alergi (misalnya debu)."
+  },
+  {
+    q: "8. Cara memelihara kesehatan organ pernapasan adalah ...",
+    options: ["Menghirup asap rokok", "Berolahraga secara teratur", "Menghirup udara kotor", "Tidur terlalu lama"],
+    answer: 1,
+    feedback: "✅ Tepat! Berolahraga teratur sangat baik untuk menjaga pernapasan."
+  },
+  {
+    q: "9. Penyakit yang menyerang paru-paru akibat bakteri Mycobacterium tuberculosis adalah ...",
+    options: ["Asma", "Tuberkulosis", "Bronkitis", "Influenza"],
+    answer: 1,
+    feedback: "✅ Benar! TBC/Tuberkulosis disebabkan oleh bakteri Mycobacterium tuberculosis."
+  },
+  {
+    q: "10. Mengapa kita dianjurkan bernapas melalui hidung?",
+    options: ["Agar udara lebih cepat masuk", "Agar udara disaring dan dihangatkan", "Agar tidak membuka mulut", "Agar paru-paru bekerja lebih keras"],
+    answer: 1,
+    feedback: "✅ Benar! Hidung dilengkapi dengan rambut-rambut dan selaput lendir untuk menyaring debu serta menghangatkan udara."
   }
 ];
 
@@ -327,20 +422,12 @@ function startQuiz(type) {
   state.quiz.answers = [];
   state.quiz.submitted = false;
 
-  if (type === 'pg') {
-    state.quiz.answers = new Array(pgQuestions.length).fill(null);
-    showScreen('screen-latihan-pg');
-    // Reset
-    document.getElementById('pg-nama-step').style.display = 'block';
-    document.getElementById('pg-quiz-step').style.display = 'none';
-    document.getElementById('pg-nama-input').value = state.user.nama || '';
-  } else {
-    state.quiz.answers = new Array(essayQuestions.length).fill('');
-    showScreen('screen-latihan-essay');
-    document.getElementById('essay-nama-step').style.display = 'block';
-    document.getElementById('essay-quiz-step').style.display = 'none';
-    document.getElementById('essay-nama-input').value = state.user.nama || '';
-  }
+  state.quiz.answers = new Array(pgQuestions.length).fill(null);
+  showScreen('screen-latihan-pg');
+  // Reset
+  document.getElementById('pg-nama-step').style.display = 'block';
+  document.getElementById('pg-quiz-step').style.display = 'none';
+  document.getElementById('pg-nama-input').value = state.user.nama || '';
 }
 
 function startPGQuiz() {
@@ -350,15 +437,6 @@ function startPGQuiz() {
   document.getElementById('pg-nama-step').style.display = 'none';
   document.getElementById('pg-quiz-step').style.display = 'block';
   renderPGQuestion();
-}
-
-function startEssayQuiz() {
-  const nama = document.getElementById('essay-nama-input').value.trim();
-  if (!nama) { showToast('❗ Tulis namamu dulu ya!'); return; }
-  state.quiz.namaTemp = nama;
-  document.getElementById('essay-nama-step').style.display = 'none';
-  document.getElementById('essay-quiz-step').style.display = 'block';
-  renderEssayQuestion();
 }
 
 // ============================================
@@ -385,20 +463,58 @@ function renderPGQuestion() {
     container.appendChild(btn);
   });
 
-  document.getElementById('pg-btn-prev').disabled = idx === 0;
-  document.getElementById('pg-btn-next').textContent = idx === total - 1 ? '📊 Lihat Nilai' : 'Selanjutnya →';
+  // Buttons dihapus untuk Quizziz UI style
 }
 
 function selectPGAnswer(i) {
+  // Cegah jawaban ganda
+  if (state.quiz.answers[state.quiz.currentIndex] !== null) return;
+  
   state.quiz.answers[state.quiz.currentIndex] = i;
-  renderPGQuestion();
+  const q = pgQuestions[state.quiz.currentIndex];
+  
+  const container = document.getElementById('pg-options');
+  const buttons = container.querySelectorAll('.quiz-option');
+  const optLabel = container.querySelectorAll('.option-label');
+
+  // Interactive Quizizz Style
+  if (i === q.answer) {
+    AudioManager.playClick();
+    buttons[i].classList.add('correct');
+    buttons[i].style.background = '#4CAF50';
+    buttons[i].style.color = '#fff';
+    buttons[i].style.borderColor = '#4CAF50';
+    optLabel[i].style.background = '#fff';
+    optLabel[i].style.color = '#4CAF50';
+    optLabel[i].style.borderColor = '#4CAF50';
+    showToast('🎉 Benar!');
+  } else {
+    AudioManager.playClick();
+    buttons[i].style.background = '#F44336';
+    buttons[i].style.color = '#fff';
+    buttons[i].style.borderColor = '#F44336';
+    optLabel[i].style.background = '#fff';
+    optLabel[i].style.color = '#F44336';
+    optLabel[i].style.borderColor = '#F44336';
+    // Highlight jawaban yang benar
+    if (buttons[q.answer]) {
+      buttons[q.answer].style.background = '#4CAF50';
+      buttons[q.answer].style.color = '#fff';
+      buttons[q.answer].style.borderColor = '#4CAF50';
+      optLabel[q.answer].style.background = '#fff';
+      optLabel[q.answer].style.color = '#4CAF50';
+      optLabel[q.answer].style.borderColor = '#4CAF50';
+    }
+    showToast('😅 Ups, kurang tepat!');
+  }
+
+  // Tunda sejenak agar siswa melihat feedback, lalu lanjut
+  setTimeout(() => {
+    pgNext();
+  }, 1800);
 }
 
 function pgNext() {
-  if (state.quiz.answers[state.quiz.currentIndex] === null) {
-    showToast('❗ Pilih jawaban dulu ya!');
-    return;
-  }
   if (state.quiz.currentIndex < pgQuestions.length - 1) {
     state.quiz.currentIndex++;
     renderPGQuestion();
@@ -423,70 +539,7 @@ function submitPG() {
   showScore(score, 'Pilihan Ganda', correct, pgQuestions.length);
 }
 
-// ============================================
-// ESSAY QUIZ
-// ============================================
-function renderEssayQuestion() {
-  const idx   = state.quiz.currentIndex;
-  const q     = essayQuestions[idx];
-  const total = essayQuestions.length;
-
-  document.getElementById('essay-question-num').textContent = `Soal ${idx + 1} dari ${total}`;
-  document.getElementById('essay-progress-fill').style.width = `${((idx + 1) / total) * 100}%`;
-  document.getElementById('essay-question-text').textContent = q.q;
-  document.getElementById('essay-hint').textContent = q.hint;
-
-  const textarea = document.getElementById('essay-answer-input');
-  textarea.value = state.quiz.answers[idx] || '';
-
-  document.getElementById('essay-btn-prev').disabled = idx === 0;
-  document.getElementById('essay-btn-next').textContent = idx === total - 1 ? '📊 Lihat Nilai' : 'Selanjutnya →';
-}
-
-function essayNext() {
-  const textarea = document.getElementById('essay-answer-input');
-  const val = textarea.value.trim();
-  if (!val) {
-    showToast('❗ Tulis jawabanmu dulu ya!');
-    return;
-  }
-  state.quiz.answers[state.quiz.currentIndex] = val;
-
-  if (state.quiz.currentIndex < essayQuestions.length - 1) {
-    state.quiz.currentIndex++;
-    renderEssayQuestion();
-  } else {
-    submitEssay();
-  }
-}
-
-function essayPrev() {
-  const textarea = document.getElementById('essay-answer-input');
-  state.quiz.answers[state.quiz.currentIndex] = textarea.value.trim();
-  if (state.quiz.currentIndex > 0) {
-    state.quiz.currentIndex--;
-    renderEssayQuestion();
-  }
-}
-
-function submitEssay() {
-  let totalScore = 0;
-  essayQuestions.forEach((q, i) => {
-    const ans = (state.quiz.answers[i] || '').toLowerCase();
-    let hit = 0;
-    q.keywords.forEach(kw => {
-      if (ans.includes(kw.toLowerCase())) hit++;
-    });
-    const ratio = hit / q.keywords.length;
-    // Score per question: 0–20 based on keyword hit ratio
-    if (ratio >= 0.6)      totalScore += 20;
-    else if (ratio >= 0.4) totalScore += 15;
-    else if (ratio >= 0.2) totalScore += 10;
-    else if (ratio > 0)    totalScore += 5;
-  });
-
-  showScore(totalScore, 'Essay Terbatas', null, essayQuestions.length);
-}
+// ESSAY CODE DIBUANG
 
 // ============================================
 // SHOW SCORE
@@ -496,6 +549,19 @@ function showScore(score, type, correct, total) {
 
   document.getElementById('skor-nama-display').textContent = state.quiz.namaTemp;
   document.getElementById('skor-jenis-display').textContent = 'Jenis: ' + type;
+
+  // Render actions based on type
+  const actionsDiv = document.querySelector('.skor-actions');
+  if (actionsDiv) {
+    if (type === 'PreTest IPA') {
+      actionsDiv.innerHTML = `<button class="btn-primary" style="width:100%; background: linear-gradient(135deg, #FF8A65, #E64A19);" onclick="showScreen('screen-materi')">Lanjut ke Materi →</button>`;
+    } else {
+      actionsDiv.innerHTML = `
+        <button class="btn-secondary" onclick="retryQuiz()">🔄 Coba Lagi</button>
+        <button class="btn-primary" onclick="showScreen('screen-menu')">🏠 Menu Utama</button>
+      `;
+    }
+  }
 
   // Animate count-up
   let count = 0;
@@ -545,6 +611,11 @@ function showScore(score, type, correct, total) {
   // Store last quiz info for retry
   state.quiz.lastScore = score;
   state.quiz.lastType  = type;
+
+  // Tembakkan suara hasil saat skor dikalkulasi selesai
+  setTimeout(() => {
+    AudioManager.playScoreSound(score);
+  }, 300);
 }
 
 function retryQuiz() {
@@ -573,6 +644,27 @@ function showToast(msg) {
 }
 
 // ============================================
+// REFLEKSI & PENDAPAT
+// ============================================
+function submitPendapat() {
+  const val = document.getElementById('video-opinion-input').value.trim();
+  if (!val) {
+    showToast('❗ Ketik pendapatmu dulu ya!');
+    return;
+  }
+  showToast('✅ Pendapatmu sudah tersimpan! Keren!');
+}
+
+function submitRefleksi() {
+  const val = document.getElementById('rangkuman-refleksi-input').value.trim();
+  if (!val) {
+    showToast('❗ Ketik refleksimu dulu ya!');
+    return;
+  }
+  showToast('✅ Refleksimu sudah tersimpan! Terima kasih!');
+}
+
+// ============================================
 // INIT
 // ============================================
 document.addEventListener('DOMContentLoaded', () => {
@@ -585,10 +677,11 @@ document.addEventListener('DOMContentLoaded', () => {
     AudioManager.play(document.querySelector('.screen.active')?.id || 'screen-intro');
   }, { once: true, capture: true });
 
-  // Tombol mulai dengan ikon 🔊
-  setTimeout(() => {
-    const btn = document.getElementById('btn-audio-toggle');
-    if (btn) { btn.textContent = '🔊'; btn.title = 'Matikan Musik'; }
-  }, 100);
+  // Sound effect untuk tombol
+  document.querySelectorAll('button, .video-item, .organ-tab, .proses-tab, .quiz-option, .jenis-card').forEach(el => {
+    el.addEventListener('click', () => {
+      AudioManager.playClick();
+    });
+  });
 });
 
