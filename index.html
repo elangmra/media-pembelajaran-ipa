@@ -1286,7 +1286,8 @@
         <div class="skor-detail" id="skor-detail"></div>
         <div class="skor-actions">
           <button class="btn-secondary" onclick="retryQuiz()">🔄 Coba Lagi</button>
-          <button class="btn-primary" onclick="showScreen('screen-menu')">🏠 Menu Utama</button>
+          <button class="btn-primary" onclick="showScreen('screen-leaderboard')">🏆 Lihat Leaderboard</button>
+          <button class="btn-secondary" onclick="showScreen('screen-menu')">🏠 Menu Utama</button>
         </div>
       </div>
     </div>
@@ -1355,6 +1356,76 @@
 
   <!-- Toast Notification -->
   <div id="toast" class="toast"></div>
+
+  <!-- ===================== SCREEN: LEADERBOARD ===================== -->
+  <div id="screen-leaderboard" class="screen content-screen">
+    <div class="wave-header" style="background: linear-gradient(135deg, #f6d365 0%, #fda085 100%);">
+      <div class="wave-header-deco"><div class="hd-circle hd-c1"></div><div class="hd-circle hd-c2"></div><div class="hd-circle hd-c3"></div></div>
+      <div class="wave-header-inner">
+        <button class="btn-wave-back" onclick="showScreen('screen-skor')">&#8592; Kembali</button>
+        <div class="wave-header-title"><h2>Leaderboard</h2><p>Peringkat nilai kuis pilihan ganda</p></div>
+        <div class="wave-header-icon">🏆</div>
+      </div>
+      <div class="wave-header-wave"><svg viewBox="0 0 1200 50" preserveAspectRatio="none"><path d="M0 30 Q300 0 600 25 Q900 50 1200 20 L1200 50 L0 50Z" fill="#F8FAFF"/></svg></div>
+    </div>
+    <div class="content-body">
+      <div id="leaderboard-loading" style="text-align:center; padding: 2rem; color: #888;">
+        ⏳ Memuat data...
+      </div>
+      <!-- Podium Top 3 -->
+      <div id="leaderboard-podium" style="display:none; margin-bottom: 1.5rem;">
+        <div style="display:flex; justify-content:center; align-items:flex-end; gap:12px; padding: 0 1rem 1rem;">
+          <!-- Rank 2 (kiri) -->
+          <div id="podium-2" style="text-align:center; flex:1;">
+            <div style="font-size:0.75rem; font-weight:700; margin-bottom:4px; color:#555;" id="podium-2-nama">-</div>
+            <div style="font-size:0.7rem; color:#888; margin-bottom:6px;" id="podium-2-kelas">-</div>
+            <div style="background: linear-gradient(180deg,#C0C0C0,#A9A9A9); border-radius:8px 8px 0 0; min-height:64px; display:flex; flex-direction:column; align-items:center; justify-content:center; color:white; font-weight:700;">
+              <span style="font-size:1.5rem;">🥈</span>
+              <span id="podium-2-skor" style="font-size:1.1rem;">-</span>
+            </div>
+          </div>
+          <!-- Rank 1 (tengah, paling tinggi) -->
+          <div id="podium-1" style="text-align:center; flex:1;">
+            <div style="font-size:0.8rem; font-weight:700; margin-bottom:4px; color:#333;" id="podium-1-nama">-</div>
+            <div style="font-size:0.7rem; color:#888; margin-bottom:6px;" id="podium-1-kelas">-</div>
+            <div style="background: linear-gradient(180deg,#FFD700,#FFA500); border-radius:8px 8px 0 0; min-height:88px; display:flex; flex-direction:column; align-items:center; justify-content:center; color:white; font-weight:700; box-shadow:0 4px 12px rgba(255,165,0,0.4);">
+              <span style="font-size:1.8rem;">🥇</span>
+              <span id="podium-1-skor" style="font-size:1.3rem;">-</span>
+            </div>
+          </div>
+          <!-- Rank 3 (kanan) -->
+          <div id="podium-3" style="text-align:center; flex:1;">
+            <div style="font-size:0.75rem; font-weight:700; margin-bottom:4px; color:#555;" id="podium-3-nama">-</div>
+            <div style="font-size:0.7rem; color:#888; margin-bottom:6px;" id="podium-3-kelas">-</div>
+            <div style="background: linear-gradient(180deg,#CD7F32,#A0522D); border-radius:8px 8px 0 0; min-height:48px; display:flex; flex-direction:column; align-items:center; justify-content:center; color:white; font-weight:700;">
+              <span style="font-size:1.3rem;">🥉</span>
+              <span id="podium-3-skor" style="font-size:1rem;">-</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Tabel rank 4+ -->
+      <div id="leaderboard-table-wrap" style="display:none;">
+        <table style="width:100%; border-collapse:collapse; font-size:0.9rem;">
+          <thead>
+            <tr style="background: linear-gradient(135deg, #f6d365, #fda085); color:white;">
+              <th style="padding:8px 12px; text-align:left;">#</th>
+              <th style="padding:8px 12px; text-align:left;">Nama</th>
+              <th style="padding:8px 12px; text-align:left;">Kelas</th>
+              <th style="padding:8px 12px; text-align:center;">Skor</th>
+            </tr>
+          </thead>
+          <tbody id="leaderboard-tbody"></tbody>
+        </table>
+      </div>
+      <div id="leaderboard-empty" style="display:none; text-align:center; padding:2rem; color:#888;">
+        Belum ada data leaderboard. Jadilah yang pertama! 🚀
+      </div>
+      <button class="btn-secondary" onclick="showScreen('screen-menu')" style="width:100%; margin-top:1.5rem;">
+        🏠 Menu Utama
+      </button>
+    </div>
+  </div>
 
   <script src="js/app.js"></script>
 </body>
