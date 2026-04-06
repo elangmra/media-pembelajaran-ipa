@@ -10,7 +10,7 @@
 // ============================================
 const state = {
   user: { nama: '', kelas: '' },
-  currentVideoId: 'YLJoVWq3uOA',
+  currentVideoId: 'mqwj6eqIyuA',
   quiz: {
     type: null,        // 'pg' | 'essay'
     currentIndex: 0,
@@ -30,20 +30,20 @@ const AudioManager = (() => {
   // Screens quiz/skor pakai materi juga
 
   const tracks = {
-    menu:   new Audio('Sunny Steps.mp3'),
+    menu: new Audio('Sunny Steps.mp3'),
     materi: new Audio('Quiet Garden Minds.mp3'),
   };
 
   // Setup kedua track
   Object.values(tracks).forEach(a => {
-    a.loop   = true;
+    a.loop = true;
     a.volume = 0;
   });
 
-  let current  = null;   // key: 'menu' | 'materi' | null
-  let muted    = true;   // default: musik MATI, tekan tombol untuk menyalakan
+  let current = null;   // key: 'menu' | 'materi' | null
+  let muted = true;   // default: musik MATI, tekan tombol untuk menyalakan
   const TARGET_VOL = 0.4;
-  const FADE_MS    = 800;
+  const FADE_MS = 800;
 
   /** Fade volume dari `from` ke `to` pada audio `a` */
   function fadeTo(a, from, to, onDone) {
@@ -80,7 +80,7 @@ const AudioManager = (() => {
 
     // Fade in track baru
     next.currentTime = 0;
-    next.play().catch(() => {});
+    next.play().catch(() => { });
     fadeTo(next, 0, TARGET_VOL);
     current = key;
     updateBtn();
@@ -99,7 +99,7 @@ const AudioManager = (() => {
       const next = tracks[key];
       current = key;
       next.currentTime = 0;
-      next.play().catch(() => {});
+      next.play().catch(() => { });
       fadeTo(next, 0, TARGET_VOL);
     }
     updateBtn();
@@ -134,7 +134,7 @@ const AudioManager = (() => {
     if (audioCtx.state === 'suspended') audioCtx.resume();
     const osc = audioCtx.createOscillator();
     const gain = audioCtx.createGain();
-    
+
     if (score >= 60) {
       // Happy fanfare
       osc.type = 'square';
@@ -147,7 +147,7 @@ const AudioManager = (() => {
       osc.frequency.setValueAtTime(300, audioCtx.currentTime);
       osc.frequency.exponentialRampToValueAtTime(150, audioCtx.currentTime + 0.3);
     }
-    
+
     gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
     gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
     osc.connect(gain);
@@ -194,16 +194,16 @@ setInterval(toggleBreathing, 2000);
 // ============================================
 function handleLogin(e) {
   e.preventDefault();
-  const nama  = document.getElementById('input-nama').value.trim();
+  const nama = document.getElementById('input-nama').value.trim();
   const kelas = document.getElementById('input-kelas').value.trim();
   if (!nama || !kelas) {
     showToast('❗ Tolong isi nama dan kelas kamu!');
     return;
   }
-  state.user.nama  = nama;
+  state.user.nama = nama;
   state.user.kelas = kelas;
 
-  document.getElementById('display-nama').textContent  = nama;
+  document.getElementById('display-nama').textContent = nama;
   document.getElementById('display-kelas').textContent = 'Kelas ' + kelas;
 
   showScreen('screen-menu');
@@ -212,7 +212,7 @@ function handleLogin(e) {
 
 function logout() {
   if (confirm('Kamu yakin ingin keluar? Progres latihan soal tidak tersimpan.')) {
-    document.getElementById('input-nama').value  = '';
+    document.getElementById('input-nama').value = '';
     document.getElementById('input-kelas').value = '';
     state.user = { nama: '', kelas: '' };
     showScreen('screen-login');
@@ -447,7 +447,7 @@ function startPGQuiz() {
 // ============================================
 function renderPGQuestion() {
   const idx = state.quiz.currentIndex;
-  const q   = pgQuestions[idx];
+  const q = pgQuestions[idx];
   const total = pgQuestions.length;
 
   document.getElementById('pg-question-num').textContent = `Soal ${idx + 1} dari ${total}`;
@@ -472,10 +472,10 @@ function renderPGQuestion() {
 function selectPGAnswer(i) {
   // Cegah jawaban ganda
   if (state.quiz.answers[state.quiz.currentIndex] !== null) return;
-  
+
   state.quiz.answers[state.quiz.currentIndex] = i;
   const q = pgQuestions[state.quiz.currentIndex];
-  
+
   const container = document.getElementById('pg-options');
   const buttons = container.querySelectorAll('.quiz-option');
   const optLabel = container.querySelectorAll('.option-label');
@@ -612,10 +612,10 @@ function showScore(score, type, correct, total) {
     detailText = `📝 Total ${total} soal yang dikerjakan`;
   }
   document.getElementById('skor-detail').innerHTML = detailText;
-  
+
   // Store last quiz info for retry
   state.quiz.lastScore = score;
-  state.quiz.lastType  = type;
+  state.quiz.lastType = type;
 
   // Tembakkan suara hasil saat skor dikalkulasi selesai
   setTimeout(() => {
@@ -625,7 +625,7 @@ function showScore(score, type, correct, total) {
 
 function retryQuiz() {
   const type = state.quiz.type;
-  if (type === 'pg')    startQuiz('pg');
+  if (type === 'pg') startQuiz('pg');
   else if (type === 'essay') startQuiz('essay');
 }
 
@@ -658,19 +658,19 @@ function saveScoreToServer(nama, kelas, skor) {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ nama, kelas, skor })
-  }).catch(() => {}); // fire-and-forget, jangan blok UI
+  }).catch(() => { }); // fire-and-forget, jangan blok UI
 }
 
 function loadLeaderboard() {
-  const loading   = document.getElementById('leaderboard-loading');
-  const podium    = document.getElementById('leaderboard-podium');
+  const loading = document.getElementById('leaderboard-loading');
+  const podium = document.getElementById('leaderboard-podium');
   const tableWrap = document.getElementById('leaderboard-table-wrap');
-  const empty     = document.getElementById('leaderboard-empty');
+  const empty = document.getElementById('leaderboard-empty');
 
-  if (loading)   loading.style.display   = 'block';
-  if (podium)    podium.style.display    = 'none';
+  if (loading) loading.style.display = 'block';
+  if (podium) podium.style.display = 'none';
   if (tableWrap) tableWrap.style.display = 'none';
-  if (empty)     empty.style.display     = 'none';
+  if (empty) empty.style.display = 'none';
 
   fetch(API_BASE + '/get_leaderboard.php')
     .then(r => r.json())
@@ -684,7 +684,7 @@ function loadLeaderboard() {
     })
     .catch(() => {
       if (loading) loading.style.display = 'none';
-      if (empty)   empty.style.display   = 'block';
+      if (empty) empty.style.display = 'block';
     });
 }
 
@@ -696,12 +696,12 @@ function renderLeaderboard(data) {
   [1, 2, 3].forEach(rank => {
     const entry = data[rank - 1];
     if (entry) {
-      document.getElementById('podium-' + rank + '-nama').textContent  = entry.nama;
+      document.getElementById('podium-' + rank + '-nama').textContent = entry.nama;
       document.getElementById('podium-' + rank + '-kelas').textContent = entry.kelas;
-      document.getElementById('podium-' + rank + '-skor').textContent  = entry.skor;
+      document.getElementById('podium-' + rank + '-skor').textContent = entry.skor;
       const col = document.getElementById('podium-' + rank);
       if (col && entry.nama.toLowerCase() === myNama) {
-        col.style.outline      = '2px solid #4facfe';
+        col.style.outline = '2px solid #4facfe';
         col.style.borderRadius = '8px';
       }
     }
@@ -709,7 +709,7 @@ function renderLeaderboard(data) {
   if (podium) podium.style.display = 'block';
 
   // Tabel rank 4+
-  const tbody     = document.getElementById('leaderboard-tbody');
+  const tbody = document.getElementById('leaderboard-tbody');
   const tableWrap = document.getElementById('leaderboard-table-wrap');
   tbody.innerHTML = '';
   const rest = data.slice(3);
@@ -717,7 +717,7 @@ function renderLeaderboard(data) {
     rest.forEach((entry, i) => {
       const rank = i + 4;
       const isMe = entry.nama.toLowerCase() === myNama;
-      const tr   = document.createElement('tr');
+      const tr = document.createElement('tr');
       tr.style.background = isMe ? '#FFF9C4' : (i % 2 === 0 ? '#fff' : '#fafafa');
       if (isMe) tr.style.fontWeight = '600';
       tr.innerHTML = `
