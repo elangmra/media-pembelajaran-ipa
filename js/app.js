@@ -10,6 +10,7 @@
 // ============================================
 const state = {
   user: { nama: '', kelas: '' },
+  currentVideoId: 'mqwj6eqIyuA',
   quiz: {
     type: null,        // 'pg' | 'essay'
     currentIndex: 0,
@@ -171,6 +172,7 @@ function showScreen(id) {
   }
   // Trigger audio berdasarkan screen
   AudioManager.play(id);
+  if (id === 'screen-leaderboard') loadLeaderboard();
 }
 
 
@@ -243,6 +245,7 @@ function showProses(id, btn) {
 // VIDEO
 // ============================================
 function changeVideo(videoId, el) {
+  state.currentVideoId = videoId;
   const iframe = document.getElementById('youtube-video');
   const link = document.getElementById('youtube-link');
   if (iframe) iframe.src = 'https://www.youtube.com/embed/' + videoId + '?autoplay=1';
@@ -537,6 +540,8 @@ function submitPG() {
   });
   const score = Math.round((correct / pgQuestions.length) * 100);
   showScore(score, 'Pilihan Ganda', correct, pgQuestions.length);
+  // Simpan ke server (non-blocking)
+  saveScoreToServer(state.quiz.namaTemp, state.user.kelas || '-', score);
 }
 
 // ESSAY CODE DIBUANG
@@ -644,24 +649,142 @@ function showToast(msg) {
 }
 
 // ============================================
-// REFLEKSI & PENDAPAT
+// API HELPERS
 // ============================================
-function submitPendapat() {
-  const val = document.getElementById('video-opinion-input').value.trim();
-  if (!val) {
-    showToast('❗ Ketik pendapatmu dulu ya!');
-    return;
-  }
-  showToast('✅ Pendapatmu sudah tersimpan! Keren!');
+const API_BASE = 'api';
+
+function saveScoreToServer(nama, kelas, skor) {
+  fetch(API_BASE + '/submit_score.php', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ nama, kelas, skor })
+  }).catch(() => {}); // fire-and-forget, jangan blok UI
 }
 
-function submitRefleksi() {
-  const val = document.getElementById('rangkuman-refleksi-input').value.trim();
-  if (!val) {
-    showToast('❗ Ketik refleksimu dulu ya!');
-    return;
+function loadLeaderboard() {
+  const loading   = document.getElementById('leaderboard-loading');
+  const podium    = document.getElementById('leaderboard-podium');
+  const tableWrap = document.getElementById('leaderboard-table-wrap');
+  const empty     = document.getElementById('leaderboard-empty');
+
+  if (loading)   loading.style.display   = 'block';
+  if (podium)    podium.style.display    = 'none';
+  if (tableWrap) tableWrap.style.display = 'none';
+  if (empty)     empty.style.display     = 'none';
+
+  fetch(API_BASE + '/get_leaderboard.php')
+    .then(r => r.json())
+    .then(res => {
+      if (loading) loading.style.display = 'none';
+      if (!res.success || !res.data.length) {
+        if (empty) empty.style.display = 'block';
+        return;
+      }
+      renderLeaderboard(res.data);
+    })
+    .catch(() => {
+      if (loading) loading.style.display = 'none';
+      if (empty)   empty.style.display   = 'block';
+    });
+}
+
+function renderLeaderboard(data) {
+  const myNama = (state.quiz.namaTemp || state.user.nama || '').toLowerCase();
+
+  // Podium top 3
+  const podium = document.getElementById('leaderboard-podium');
+  [1, 2, 3].forEach(rank => {
+    const entry = data[rank - 1];
+    if (entry) {
+      document.getElementById('podium-' + rank + '-nama').textContent  = entry.nama;
+      document.getElementById('podium-' + rank + '-kelas').textContent = entry.kelas;
+      document.getElementById('podium-' + rank + '-skor').textContent  = entry.skor;
+      const col = document.getElementById('podium-' + rank);
+      if (col && entry.nama.toLowerCase() === myNama) {
+        col.style.outline      = '2px solid #4facfe';
+        col.style.borderRadius = '8px';
+      }
+    }
+  });
+  if (podium) podium.style.display = 'block';
+
+  // Tabel rank 4+
+  const tbody     = document.getElementById('leaderboard-tbody');
+  const tableWrap = document.getElementById('leaderboard-table-wrap');
+  tbody.innerHTML = '';
+  const rest = data.slice(3);
+  if (rest.length) {
+    rest.forEach((entry, i) => {
+      const rank = i + 4;
+      const isMe = entry.nama.toLowerCase() === myNama;
+      const tr   = document.createElement('tr');
+      tr.style.background = isMe ? '#FFF9C4' : (i % 2 === 0 ? '#fff' : '#fafafa');
+      if (isMe) tr.style.fontWeight = '600';
+      tr.innerHTML = `
+        <td style="padding:8px 12px; color:#888;">${rank}</td>
+        <td style="padding:8px 12px;">${entry.nama}${isMe ? ' ✨' : ''}</td>
+        <td style="padding:8px 12px; color:#666;">${entry.kelas}</td>
+        <td style="padding:8px 12px; text-align:center; font-weight:700; color:#f6a623;">${entry.skor}</td>
+      `;
+      tbody.appendChild(tr);
+    });
+    tableWrap.style.display = 'block';
   }
-  showToast('✅ Refleksimu sudah tersimpan! Terima kasih!');
+}
+
+// ============================================
+// REFLEKSI & PENDAPAT
+// ============================================
+function submitRefleksi() {
+  const textarea = document.getElementById('rangkuman-refleksi-input');
+  const btn = textarea ? textarea.parentElement.querySelector('button') : null;
+  const isi = textarea ? textarea.value.trim() : '';
+
+  if (!isi) { showToast('❗ Tulis refleksimu dulu ya!'); return; }
+  if (!state.user.nama) { showToast('❗ Kamu belum login!'); return; }
+
+  fetch(API_BASE + '/submit_refleksi.php', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ nama: state.user.nama, kelas: state.user.kelas, isi })
+  })
+    .then(r => r.json())
+    .then(res => {
+      if (res.success) {
+        showToast('💭 Refleksi kamu sudah terkirim!');
+        textarea.value = '';
+        if (btn) { btn.disabled = true; btn.textContent = '✅ Terkirim'; }
+      } else {
+        showToast('❗ Gagal mengirim, coba lagi.');
+      }
+    })
+    .catch(() => showToast('❗ Gagal mengirim, coba lagi.'));
+}
+
+function submitPendapat() {
+  const textarea = document.getElementById('video-opinion-input');
+  const btn = textarea ? textarea.parentElement.querySelector('button') : null;
+  const isi = textarea ? textarea.value.trim() : '';
+
+  if (!isi) { showToast('❗ Tulis pendapatmu dulu ya!'); return; }
+  if (!state.user.nama) { showToast('❗ Kamu belum login!'); return; }
+
+  fetch(API_BASE + '/submit_pendapat.php', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ nama: state.user.nama, kelas: state.user.kelas, video_id: state.currentVideoId, isi })
+  })
+    .then(r => r.json())
+    .then(res => {
+      if (res.success) {
+        showToast('🎬 Pendapat kamu sudah terkirim!');
+        textarea.value = '';
+        if (btn) { btn.disabled = true; btn.textContent = '✅ Terkirim'; }
+      } else {
+        showToast('❗ Gagal mengirim, coba lagi.');
+      }
+    })
+    .catch(() => showToast('❗ Gagal mengirim, coba lagi.'));
 }
 
 // ============================================
