@@ -10,7 +10,7 @@
 // ============================================
 const state = {
   user: { nama: '', kelas: '' },
-  currentVideoId: 'mqwj6eqIyuA',
+  currentVideoId: 'YLJoVWq3uOA',
   quiz: {
     type: null,        // 'pg' | 'essay'
     currentIndex: 0,
