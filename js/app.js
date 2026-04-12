@@ -41,7 +41,7 @@ const AudioManager = (() => {
   });
 
   let current = null;   // key: 'menu' | 'materi' | null
-  let muted = true;   // default: musik MATI, tekan tombol untuk menyalakan
+  let muted = true;     // default: muted, nyala setelah user klik
   const TARGET_VOL = 0.4;
   const FADE_MS = 800;
 
@@ -80,10 +80,19 @@ const AudioManager = (() => {
 
     // Fade in track baru
     next.currentTime = 0;
-    next.play().catch(() => { });
-    fadeTo(next, 0, TARGET_VOL);
     current = key;
     updateBtn();
+    const pp = next.play();
+    fadeTo(next, 0, TARGET_VOL);
+    if (pp !== undefined) {
+      pp.catch(() => {
+        // Browser blokir autoplay — reset agar bisa dicoba ulang setelah interaksi
+        current = null;
+        clearInterval(next._fadeTimer);
+        next.volume = 0;
+        next.pause();
+      });
+    }
   }
 
   function toggleMute() {
@@ -124,9 +133,10 @@ const AudioManager = (() => {
 
   function updateBtn() {
     const btn = document.getElementById('btn-audio-toggle');
-    if (!btn) return;
-    btn.textContent = muted ? '🔇' : '🔊';
-    btn.title = muted ? 'Aktifkan Musik' : 'Matikan Musik';
+    if (btn) {
+      btn.textContent = muted ? '🔇' : '🔊';
+      btn.title = muted ? 'Aktifkan Musik' : 'Matikan Musik';
+    }
   }
 
   function playScoreSound(score) {
@@ -195,9 +205,9 @@ setInterval(toggleBreathing, 2000);
 function handleLogin(e) {
   e.preventDefault();
   const nama = document.getElementById('input-nama').value.trim();
-  const kelas = document.getElementById('input-kelas').value.trim();
-  if (!nama || !kelas) {
-    showToast('❗ Tolong isi nama dan kelas kamu!');
+  const kelas = document.getElementById('input-kelas').value || '5'; // selalu Kelas 5
+  if (!nama) {
+    showToast('❗ Tolong isi namamu dulu!');
     return;
   }
   state.user.nama = nama;
@@ -430,16 +440,21 @@ function startQuiz(type) {
   // Reset
   document.getElementById('pg-nama-step').style.display = 'block';
   document.getElementById('pg-quiz-step').style.display = 'none';
-  document.getElementById('pg-nama-input').value = state.user.nama || '';
+  // Isi badge nama dari state
+  const displayEl = document.getElementById('pg-nama-display');
+  if (displayEl) displayEl.textContent = state.user.nama || '-';
+  // Langsung tampilkan soal, skip step nama
+  document.getElementById('pg-nama-step').style.display = 'none';
+  document.getElementById('pg-quiz-step').style.display = 'block';
+  state.quiz.namaTemp = state.user.nama;
+  state.quiz.currentIndex = 0;
+  state.quiz.answers = new Array(pgQuestions.length).fill(null);
+  renderPGQuestion();
 }
 
 function startPGQuiz() {
-  const nama = document.getElementById('pg-nama-input').value.trim();
-  if (!nama) { showToast('❗ Tulis namamu dulu ya!'); return; }
-  state.quiz.namaTemp = nama;
-  document.getElementById('pg-nama-step').style.display = 'none';
-  document.getElementById('pg-quiz-step').style.display = 'block';
-  renderPGQuestion();
+  // Sudah otomatis dari state — tombol di badge langsung mulai
+  showScreen('screen-latihan-pg');
 }
 
 // ============================================
@@ -617,10 +632,74 @@ function showScore(score, type, correct, total) {
   state.quiz.lastScore = score;
   state.quiz.lastType = type;
 
+  // Render umpan balik + pembahasan only for PG
+  if (type === 'Pilihan Ganda') {
+    renderFeedbackAndPembahasan(score, correct, total);
+  } else {
+    const fbSection = document.getElementById('skor-feedback-section');
+    if (fbSection) fbSection.style.display = 'none';
+  }
+
   // Tembakkan suara hasil saat skor dikalkulasi selesai
   setTimeout(() => {
     AudioManager.playScoreSound(score);
   }, 300);
+}
+
+function renderFeedbackAndPembahasan(score, correct, total) {
+  const fbSection = document.getElementById('skor-feedback-section');
+  if (!fbSection) return;
+  fbSection.style.display = 'block';
+
+  // --- Rekomendasi belajar berdasarkan skor ---
+  const rekEl = document.getElementById('skor-rekomendasi');
+  const rekListEl = document.getElementById('skor-rekomendasi-list');
+
+  let rekTeks, rekItems;
+  if (score >= 90) {
+    rekTeks = '🌟 Luar biasa! Kamu menguasai materi Sistem Pernapasan dengan sangat baik. Terus pertahankan semangat belajarmu!';
+    rekItems = ['✅ Coba tantang dirimu dengan soal tingkat lebih sulit.', '✅ Bantu teman-temanku yang masih kesulitan!', '✅ Baca buku referensi tambahan tentang pernapasan hewan.'];
+  } else if (score >= 75) {
+    rekTeks = '⭐ Bagus sekali! Kamu sudah memahami sebagian besar materi. Masih ada sedikit bagian yang perlu diperkuat.';
+    rekItems = ['📖 Pelajari ulang bagian soal yang kamu jawab salah.', '🎬 Tonton kembali Video Pembelajaran untuk pemahaman lebih dalam.', '📝 Baca Rangkuman Materi sekali lagi sebelum mencoba lagi.'];
+  } else if (score >= 60) {
+    rekTeks = '😊 Sudah cukup baik! Tapi masihbanyak konsep yang perlu dipelajari lagi. Jangan menyerah ya!';
+    rekItems = ['📖 Buka menu Materi Belajar dan baca ulang dari awal.', '🗺️ Lihat Peta Konsep untuk memahami alur materi secara keseluruhan.', '💡 Gunakan Tips Belajar untuk strategi belajar yang lebih efektif.', '🔄 Coba kerjakan latihan soal lagi setelah belajar ulang.'];
+  } else {
+    rekTeks = '💪 Semangat! Kamu masih perlu banyak latihan. Pelajari materi dari awal secara bertahap.';
+    rekItems = ['📖 Mulai dari menu Materi Belajar — baca bagian Pembukaan dulu.', '🎬 Tonton video pembelajaran agar konsep lebih mudah dipahami.', '🗺️ Gunakan Peta Konsep untuk melihat gambaran besar materi.', '💡 Baca Tips Belajar sebelum mengerjakan soal lagi.', '🔄 Jangan malu mencoba lagi — setiap usaha adalah kemajuan!'];
+  }
+
+  rekEl.textContent = rekTeks;
+  rekListEl.innerHTML = rekItems.map(item =>
+    `<div style="display:flex; align-items:flex-start; gap:0.5rem; margin-bottom:0.5rem; font-size:0.9rem; color:#333;">${item}</div>`
+  ).join('');
+
+  // --- Pembahasan per soal ---
+  const pembahasanEl = document.getElementById('skor-pembahasan-list');
+  if (!pembahasanEl) return;
+  const userAnswers = state.quiz.answers;
+  let html = '';
+  pgQuestions.forEach((q, i) => {
+    const userAns = userAnswers[i];
+    const isCorrect = userAns === q.answer;
+    const bgColor = isCorrect ? '#E8F5E9' : '#FFF3E0';
+    const borderColor = isCorrect ? '#66BB6A' : '#FFA726';
+    const icon = isCorrect ? '✅' : '❌';
+    const userLabel = userAns !== null ? q.options[userAns] : '(tidak dijawab)';
+    const correctLabel = q.options[q.answer];
+    // Strip prefix emoji + "Benar!" / "Tepat!" agar penjelasan tampil netral
+    const explanation = (q.feedback || '').replace(/^[\u{1F3AF}\u{1F44D}\u2705\u{1F31F}]?\s*(Benar!|Tepat!|Tepat sekali!|Benar sekali!)\s*/u, '💡 ').trim();
+    html += `
+      <div style="background:${bgColor}; border-left: 4px solid ${borderColor}; border-radius:12px; padding:1rem; margin-bottom:1rem;">
+        <p style="font-weight:800; color:#333; margin-bottom:0.4rem; font-size:0.9rem;">${icon} Soal ${i+1}: ${q.q}</p>
+        <p style="font-size:0.85rem; color:#555; margin:0.2rem 0;">Jawabanmu: <strong style="color:${isCorrect?'#388E3C':'#E65100'}">${userLabel}</strong></p>
+        ${!isCorrect ? `<p style="font-size:0.85rem; color:#555; margin:0.2rem 0;">Jawaban benar: <strong style="color:#388E3C">${correctLabel}</strong></p>` : ''}
+        <p style="font-size:0.85rem; color:#1565C0; margin-top:0.5rem; font-style:italic;">${explanation}</p>
+      </div>
+    `;
+  });
+  pembahasanEl.innerHTML = html;
 }
 
 function retryQuiz() {
@@ -793,12 +872,6 @@ function submitPendapat() {
 document.addEventListener('DOMContentLoaded', () => {
   showScreen('screen-intro');
 
-  // Browser butuh interaksi pertama sebelum bisa autoplay
-  // → musik langsung mulai begitu user klik apapun untuk pertama kali
-  // capture: true agar listener ini jalan sebelum handler tombol lain (mis. tombol mute)
-  document.addEventListener('click', () => {
-    AudioManager.play(document.querySelector('.screen.active')?.id || 'screen-intro');
-  }, { once: true, capture: true });
 
   // Sound effect untuk tombol
   document.querySelectorAll('button, .video-item, .organ-tab, .proses-tab, .quiz-option, .jenis-card').forEach(el => {

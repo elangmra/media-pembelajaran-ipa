@@ -16,6 +16,7 @@
 
 <body>
 
+
   <!-- ===================== SCREEN: INTRO ===================== -->
   <div id="screen-intro" class="screen active">
 
@@ -154,6 +155,14 @@
 
     <!-- KONTEN TENGAH -->
     <div class="intro-content">
+      <!-- BADGE SEKOLAH -->
+      <div class="intro-school-badge">
+        <span class="intro-school-icon">🏫</span>
+        <div class="intro-school-info">
+          <span class="intro-school-name">SD N Ciherang 01</span>
+          <span class="intro-school-loc">Kec. Dramaga · Kab. Bogor</span>
+        </div>
+      </div>
       <div class="intro-logo">
         <img src="images/sistem_pernapasan_orang.png" alt="Sistem Pernapasan" class="intro-person-img" />
       </div>
@@ -161,9 +170,14 @@
       <h2 class="intro-subject" style="font-size: 1.4rem;">Sistem Pernapasan Manusia</h2>
       <p class="intro-class">Media Pembelajaran Interaktif IPAS Kelas 5</p>
       <p class="intro-source">Sumber: ESPS IPAS SD/MI Kelas V Hal. 104</p>
-      <button id="btn-intro-start" class="btn-primary btn-pulse" onclick="showScreen('screen-login')">
+      <button id="btn-intro-start" class="btn-primary btn-pulse" onclick="AudioManager.toggleMute(); showScreen('screen-login')">
         <span>✨ Mulai Belajar</span>
       </button>
+      <!-- NAMA PENGEMBANG -->
+      <div class="intro-developer">
+        <span class="intro-dev-label">👨‍💻 Dikembangkan oleh:</span>
+        <span class="intro-dev-name">Deden Supriatna</span>
+      </div>
     </div>
   </div>
 
@@ -216,11 +230,14 @@
             </div>
 
             <div class="input-field">
-              <label for="input-kelas">Kelas</label>
-              <div class="input-wrapper">
-                <span class="input-icon">🏫</span>
-                <input type="text" id="input-kelas" placeholder="Misal: 5-A" required autocomplete="off" />
+              <label>Kelas</label>
+              <div class="kelas-locked-badge">
+                <span class="kelas-badge-icon">🏫</span>
+                <span class="kelas-badge-text">Kelas 5</span>
+                <span class="kelas-badge-lock">🔒</span>
               </div>
+              <!-- Hidden input agar form tetap valid -->
+              <input type="hidden" id="input-kelas" value="5" />
             </div>
 
             <button type="submit" class="btn-login-submit">
@@ -322,12 +339,68 @@
     </div>
 
     <div class="menu-title-wrap">
+      <!-- ANIMASI SISWA SD NEGERI -->
+      <div class="sd-student-wrap">
+        <svg class="sd-student-svg" viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg">
+          <g class="student-body">
+            <!-- Kaki Merah -->
+            <rect x="35" y="80" width="10" height="20" fill="#E53935" rx="2" />
+            <rect x="55" y="80" width="10" height="20" fill="#E53935" rx="2" />
+            <!-- Sepatu -->
+            <path d="M30 100 h15 v5 a5 5 0 0 1 -15 0 z" fill="#333" />
+            <path d="M50 100 h15 v5 a5 5 0 0 1 -15 0 z" fill="#333" />
+            <!-- Baju Putih (Kemeja) -->
+            <path d="M30 45 L70 45 L75 80 L25 80 Z" fill="#FFF" stroke="#E0E0E0" stroke-width="2" />
+            <!-- Kerah -->
+            <path d="M40 45 L50 55 L60 45 Z" fill="#FFF" stroke="#E0E0E0" stroke-width="1" />
+            <!-- Dasi Merah -->
+            <path d="M48 50 L52 50 L55 70 L50 75 L45 70 Z" fill="#E53935" />
+            <!-- Lengan Kanan -->
+            <path class="student-arm" d="M72 48 Q85 55 80 75" fill="none" stroke="#FFF" stroke-width="8" stroke-linecap="round" />
+            <circle cx="80" cy="78" r="4" fill="#FFCCBC" />
+            <!-- Lengan Kiri -->
+            <path class="student-arm-left" d="M28 48 Q15 55 20 75" fill="none" stroke="#FFF" stroke-width="8" stroke-linecap="round" />
+            <circle cx="20" cy="78" r="4" fill="#FFCCBC" />
+            <!-- Kepala -->
+            <circle cx="50" cy="30" r="16" fill="#FFCCBC" />
+            <!-- Rambut -->
+            <path d="M34 25 Q50 15 66 25 Q68 18 50 10 Q32 18 34 25 Z" fill="#3E2723" />
+            <circle cx="44" cy="28" r="2" fill="#333" />
+            <circle cx="56" cy="28" r="2" fill="#333" />
+            <!-- Topi SD Merah -->
+            <path d="M32 18 Q50 0 68 18" fill="#E53935" />
+            <path d="M65 18 Q75 18 80 20" fill="none" stroke="#E53935" stroke-width="3" stroke-linecap="round" />
+            <!-- Mulut Senyum -->
+            <path d="M44 36 Q50 42 56 36" fill="none" stroke="#E53935" stroke-width="2.5" stroke-linecap="round" />
+          </g>
+        </svg>
+      </div>
       <h1 class="menu-title-line1" style="font-size: 1.4rem;">Sistem Pernapasan Manusia</h1>
       <h1 class="menu-title-line2" style="font-size: 3.2rem; color: #E65100; letter-spacing: 2px;">SIMPERA</h1>
       <p class="menu-subtitle">IPAS · Kelas 5 SD/MI</p>
     </div>
 
     <div class="bigmenu-row">
+      <button class="bigmenu-card bmc-petunjuk" onclick="showScreen('screen-petunjuk')">
+        <span class="bmc-label-top">PETUNJUK</span>
+        <div class="bmc-icon">🚦</div>
+        <span class="bmc-label-bot">PENGGUNAAN</span>
+      </button>
+      <button class="bigmenu-card bmc-tips" onclick="showScreen('screen-tips')">
+        <span class="bmc-label-top">TIPS</span>
+        <div class="bmc-icon">💡</div>
+        <span class="bmc-label-bot">BELAJAR</span>
+      </button>
+      <button class="bigmenu-card bmc-peta" onclick="showScreen('screen-peta')">
+        <span class="bmc-label-top">PETA</span>
+        <div class="bmc-icon">🗺️</div>
+        <span class="bmc-label-bot">KONSEP</span>
+      </button>
+      <button class="bigmenu-card bmc-manfaat" onclick="showScreen('screen-manfaat')">
+        <span class="bmc-label-top">MANFAAT</span>
+        <div class="bmc-icon">🌟</div>
+        <span class="bmc-label-bot">APLIKASI</span>
+      </button>
       <button class="bigmenu-card bmc-panduan" onclick="showScreen('screen-panduan')">
         <span class="bmc-label-top">PANDUAN</span>
         <div class="bmc-icon">🧭</div>
@@ -695,6 +768,12 @@
           <div class="mtc-icon">🛡️</div>
           <h3>4. Gangguan & Cara Memelihara</h3>
           <p>Merawat organ pernapasan kita</p>
+          <span class="mtc-arrow">→</span>
+        </button>
+        <button class="materi-topic-card mtc-manfaat" onclick="showScreen('screen-manfaat')">
+          <div class="mtc-icon">🌟</div>
+          <h3>5. Manfaat Belajar Aplikasi</h3>
+          <p>Kenapa belajar ini itu penting?</p>
           <span class="mtc-arrow">→</span>
         </button>
       </div>
@@ -1169,12 +1248,7 @@
         <p style="font-size:0.85rem; color:#777; text-align:center; margin-top:0.8rem; font-style:italic;">Sumber:
           Channel YouTube Guru Berto (Video IPAS Kelas 5 SD)</p>
       </div>
-      <div class="video-fallback" style="margin-top: 1rem;">
-        <a id="youtube-link" href="https://www.youtube.com/watch?v=mqwj6eqIyuA" target="_blank" class="btn-primary"
-          style="width:100%; margin-bottom: 1.5rem; gap: 0.5rem; background: linear-gradient(135deg, #F06292, #C2185B);">
-          <span>🌐 Tonton Langsung di YouTube</span>
-        </a>
-      </div>
+
 
       <!-- KOTAK ISIAN PENDAPAT SISWA -->
       <div class="video-opinion-box"
@@ -1401,12 +1475,16 @@
     </div>
     <div class="content-body">
       <!-- Nama input -->
-      <div id="pg-nama-step" class="quiz-nama-step">
+      <div id="pg-nama-step" class="quiz-nama-step" style="display:none;">
         <div class="quiz-nama-card">
           <div class="quiz-name-icon">✏️</div>
-          <h3>Masukkan Namamu</h3>
-          <p>Nama akan tercantum di hasil nilai kamu!</p>
-          <input type="text" id="pg-nama-input" placeholder="Ketik namamu di sini..." class="quiz-name-input" />
+          <h3>Peserta Latihan Soal</h3>
+          <p>Nama kamu sudah tercatat. Siap mulai mengerjakan?</p>
+          <div class="kelas-locked-badge" style="margin: 0.8rem 0; justify-content: center;">
+            <span class="kelas-badge-icon">👤</span>
+            <span class="kelas-badge-text" id="pg-nama-display">-</span>
+            <span class="kelas-badge-lock">🔒</span>
+          </div>
           <button class="btn-primary" onclick="startPGQuiz()">Mulai Mengerjakan! 🚀</button>
         </div>
       </div>
@@ -1462,10 +1540,25 @@
         <p class="skor-predikat" id="skor-predikat"></p>
         <p class="skor-pesan" id="skor-pesan"></p>
         <div class="skor-detail" id="skor-detail"></div>
-        <div class="skor-actions">
+        <div class="skor-actions" id="skor-actions">
           <button class="btn-secondary" onclick="retryQuiz()">🔄 Coba Lagi</button>
           <button class="btn-primary" onclick="showScreen('screen-leaderboard')">🏆 Lihat Leaderboard</button>
           <button class="btn-secondary" onclick="showScreen('screen-menu')">🏠 Menu Utama</button>
+        </div>
+      </div>
+
+      <!-- UMPAN BALIK & REKOMENDASI -->
+      <div id="skor-feedback-section" style="display:none; margin-top: 1.5rem;">
+        <div style="background: linear-gradient(135deg, #E3F2FD, #BBDEFB); border-radius: 20px; padding: 1.5rem; border-left: 5px solid #1976D2; margin-bottom: 1.2rem;">
+          <h4 style="color:#1565C0; margin-bottom:0.6rem; font-size:1.1rem;">📋 Umpan Balik & Rekomendasi Belajar</h4>
+          <p id="skor-rekomendasi" style="color:#333; font-size:0.95rem; line-height:1.6;"></p>
+          <div id="skor-rekomendasi-list" style="margin-top:0.8rem;"></div>
+        </div>
+
+        <!-- PEMBAHASAN SOAL -->
+        <div style="background: white; border-radius: 20px; padding: 1.5rem; box-shadow: 0 4px 20px rgba(0,0,0,0.07); margin-bottom: 1.5rem;">
+          <h4 style="color:#E65100; margin-bottom:1rem; font-size:1.1rem;">📝 Pembahasan Soal</h4>
+          <div id="skor-pembahasan-list"></div>
         </div>
       </div>
     </div>
@@ -1535,11 +1628,46 @@
         </div>
       </div>
       <div class="developer-card">
-        <h4>👨‍💻 Pengembang Media</h4>
-        <p><strong>Deden Supriatna</strong></p>
-        <p>Mahasiswa Magister Teknologi Pendidikan,<br />Universitas Ibnu Khaldun Bogor.</p>
-        <p style="margin-top: 0.5rem; font-size: 0.85rem; color: #555;">Media pembelajaran interaktif ini dikembangkan
-          untuk mata pelajaran IPAS, materi Sistem Pernapasan Manusia, Kelas 5 SD/MI.</p>
+        <div style="display: flex; flex-direction: column; align-items: center; text-align: center; gap: 0.5rem;">
+          <div style="width: 72px; height: 72px; background: linear-gradient(135deg, #4facfe, #00f2fe); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2.2rem; box-shadow: 0 6px 16px rgba(79,172,254,0.35);">👨‍💻</div>
+          <h4 style="font-size: 1.1rem; color: #1565C0; margin: 0;">Pengembang Media</h4>
+        </div>
+
+        <div style="margin-top: 1rem; display: flex; flex-direction: column; gap: 0.6rem;">
+          <!-- Nama Lengkap -->
+          <div style="background: #E3F2FD; border-radius: 12px; padding: 0.8rem 1rem; display: flex; align-items: center; gap: 0.7rem;">
+            <span style="font-size: 1.3rem;">🧑‍🎓</span>
+            <div>
+              <p style="font-size: 0.75rem; color: #888; margin: 0;">Nama Lengkap Pengembang</p>
+              <p style="font-weight: 900; color: #1565C0; margin: 0; font-size: 1rem;">Deden Supriatna</p>
+            </div>
+          </div>
+
+          <!-- Nama Sekolah -->
+          <div style="background: #E8F5E9; border-radius: 12px; padding: 0.8rem 1rem; display: flex; align-items: center; gap: 0.7rem;">
+            <span style="font-size: 1.3rem;">🏫</span>
+            <div>
+              <p style="font-size: 0.75rem; color: #888; margin: 0;">Sekolah</p>
+              <p style="font-weight: 900; color: #2E7D32; margin: 0; font-size: 0.95rem;">SD Negeri Ciherang 01</p>
+              <p style="font-size: 0.8rem; color: #555; margin: 0;">Kec. Dramaga · Kab. Bogor</p>
+            </div>
+          </div>
+
+          <!-- Institusi Akademik -->
+          <div style="background: #FFF3E0; border-radius: 12px; padding: 0.8rem 1rem; display: flex; align-items: center; gap: 0.7rem;">
+            <span style="font-size: 1.3rem;">🎓</span>
+            <div>
+              <p style="font-size: 0.75rem; color: #888; margin: 0;">Institusi Akademik</p>
+              <p style="font-weight: 700; color: #E65100; margin: 0; font-size: 0.9rem;">Mahasiswa Magister Teknologi Pendidikan</p>
+              <p style="font-size: 0.8rem; color: #555; margin: 0;">Universitas Ibnu Khaldun Bogor</p>
+            </div>
+          </div>
+        </div>
+
+        <p style="margin-top: 1rem; font-size: 0.82rem; color: #777; text-align: center; line-height: 1.6;">
+          Media pembelajaran interaktif <strong>SIMPERA</strong> ini dikembangkan untuk mata pelajaran IPAS,<br>
+          materi Sistem Pernapasan Manusia, Kelas 5 SD/MI.
+        </p>
       </div>
     </div>
   </div>
@@ -1629,6 +1757,243 @@
       <button class="btn-secondary" onclick="showScreen('screen-menu')" style="width:100%; margin-top:1.5rem;">
         🏠 Menu Utama
       </button>
+    </div>
+  </div>
+
+  <!-- ===================== SCREEN: PETUNJUK PENGGUNAAN ===================== -->
+  <div id="screen-petunjuk" class="screen content-screen">
+    <div class="wave-header" style="background: linear-gradient(135deg, #1E88E5, #1565C0);">
+      <div class="wave-header-deco">
+        <div class="hd-circle hd-c1"></div><div class="hd-circle hd-c2"></div><div class="hd-circle hd-c3"></div>
+      </div>
+      <div class="wave-header-inner">
+        <button class="btn-wave-back" onclick="showScreen('screen-menu')">&#8592; Kembali</button>
+        <div class="wave-header-title">
+          <h2>Petunjuk Penggunaan</h2>
+          <p>Cara menggunakan aplikasi SIMPERA</p>
+        </div>
+        <div class="wave-header-icon">🚦</div>
+      </div>
+      <div class="wave-header-wave">
+        <svg viewBox="0 0 1200 50" preserveAspectRatio="none"><path d="M0 30 Q300 0 600 25 Q900 50 1200 20 L1200 50 L0 50Z" fill="#F8FAFF" /></svg>
+      </div>
+    </div>
+    <div class="content-body">
+      <div class="screen-hero" style="border-color:#1E88E5;">
+        <div class="screen-hero-icon">📱</div>
+        <div>
+          <h3>PETUNJUK PENGGUNAAN APLIKASI</h3>
+          <p>Ikuti langkah-langkah di bawah agar belajarmu maksimal.</p>
+        </div>
+      </div>
+      <div class="rangkuman-section" style="padding: 1.5rem; border-left: 4px solid #1E88E5;">
+        <ol style="list-style-type: decimal; margin-left: 1.2rem; font-size: 0.95rem; line-height: 1.6; color: var(--text-dark); display: flex; flex-direction: column; gap: 0.8rem;">
+          <li><strong>Mulai dari Materi:</strong> Masuk ke menu "Materi Belajar" untuk membaca konsep secara terstruktur.</li>
+          <li><strong>Tonton Video:</strong> Jika butuh animasi lebih jelas, buka menu "Video Pembelajaran".</li>
+          <li><strong>Ikuti Kuis Tepat Waktu:</strong> Kerjakan PreTest sebelum masuk materi, dan post-test/latihan soal setelah selesai belajar materi.</li>
+          <li><strong>Lihat Capaian & Tujuan:</strong> Buka "Capaian" dan "Tujuan" untuk mengetahui target belajarmu hari ini.</li>
+          <li><strong>Gunakan Suara:</strong> Aplikasi ini dilengkapi dengan panduan dan musik. Pastikan volume gawaimu tidak terlalu kecil!</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== SCREEN: TIPS BELAJAR ===================== -->
+  <div id="screen-tips" class="screen content-screen">
+    <div class="wave-header" style="background: linear-gradient(135deg, #FFB300, #F39C12);">
+      <div class="wave-header-deco">
+        <div class="hd-circle hd-c1"></div><div class="hd-circle hd-c2"></div><div class="hd-circle hd-c3"></div>
+      </div>
+      <div class="wave-header-inner">
+        <button class="btn-wave-back" onclick="showScreen('screen-menu')">&#8592; Kembali</button>
+        <div class="wave-header-title">
+          <h2>Tips Belajar</h2>
+          <p>Trik asyik memahami pernapasan</p>
+        </div>
+        <div class="wave-header-icon">💡</div>
+      </div>
+      <div class="wave-header-wave">
+        <svg viewBox="0 0 1200 50" preserveAspectRatio="none"><path d="M0 30 Q300 0 600 25 Q900 50 1200 20 L1200 50 L0 50Z" fill="#F8FAFF" /></svg>
+      </div>
+    </div>
+    <div class="content-body">
+      <div class="tujuan-milestone">
+        <div class="tm-item" style="--delay:0.05s; --tc:#F39C12;">
+          <div class="tm-icon">🤫</div>
+          <div class="tm-badge">1</div>
+          <div class="tm-body">
+            <h4>Cari Tempat Tenang</h4>
+            <p>Belajarlah di tempat yang nyaman agar kamu bisa berkonsentrasi menonton video dan membaca materi.</p>
+          </div>
+        </div>
+        <div class="tm-item" style="--delay:0.1s; --tc:#4facfe;">
+          <div class="tm-icon">📝</div>
+          <div class="tm-badge">2</div>
+          <div class="tm-body">
+            <h4>Catat Poin Penting</h4>
+            <p>Sambil melihat Peta Konsep dan infografis, gunakan buku tulismu untuk mencatat kembali informasi inti.</p>
+          </div>
+        </div>
+        <div class="tm-item" style="--delay:0.15s; --tc:#43e97b;">
+          <div class="tm-icon">🗣️</div>
+          <div class="tm-badge">3</div>
+          <div class="tm-body">
+            <h4>Ucapkan Keras</h4>
+            <p>Istilah sains seperti <strong>Alveolus</strong> atau <strong>Bronkiolus</strong> kadang sulit diingat. Ucapkan keras beberapa kali agar lebih nempel di memori!</p>
+          </div>
+        </div>
+        <div class="tm-item" style="--delay:0.2s; --tc:#E65100;">
+          <div class="tm-icon">😮‍💨</div>
+          <div class="tm-badge">4</div>
+          <div class="tm-body">
+            <h4>Lakukan Praktik Santai</h4>
+            <p>Cobalah menyadari tarikan napas dan hembusan napasmu sendiri. Rasakan bagaimana pertukaran udara bekerja layaknya mesin otomatis dalam tubuhmu!</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== SCREEN: PETA KONSEP ===================== -->
+  <div id="screen-peta" class="screen content-screen">
+    <div class="wave-header" style="background: linear-gradient(135deg, #00C853, #1B5E20);">
+      <div class="wave-header-deco">
+        <div class="hd-circle hd-c1"></div><div class="hd-circle hd-c2"></div><div class="hd-circle hd-c3"></div>
+      </div>
+      <div class="wave-header-inner">
+        <button class="btn-wave-back" onclick="showScreen('screen-menu')">&#8592; Kembali</button>
+        <div class="wave-header-title">
+          <h2>Peta Konsep</h2>
+          <p>Alur materi Sistem Pernapasan Manusia</p>
+        </div>
+        <div class="wave-header-icon">🗺️</div>
+      </div>
+      <div class="wave-header-wave">
+        <svg viewBox="0 0 1200 50" preserveAspectRatio="none"><path d="M0 30 Q300 0 600 25 Q900 50 1200 20 L1200 50 L0 50Z" fill="#F8FAFF" /></svg>
+      </div>
+    </div>
+    <div class="content-body" style="text-align: center;">
+      <!-- INFOGRAFIS PETA KONSEP -->
+      <div class="peta-konsep-wrap" style="position: relative; background: #fff; border-radius: 24px; padding: 2.5rem 1rem; box-shadow: 0 12px 35px rgba(30,136,229,0.1); margin-top: 1rem; overflow: hidden; border: 3px solid #E3F2FD;">
+        <style>
+          .peta-node:hover { transform: translateY(-6px); box-shadow: 0 16px 32px rgba(0,0,0,0.12) !important; }
+          .peta-node { transition: transform 0.3s ease, box-shadow 0.3s ease; }
+        </style>
+
+        <!-- Watermark deco -->
+        <div style="position: absolute; top: -10px; left: -20px; opacity: 0.04; font-size: 10rem; pointer-events:none; user-select:none;">🫁</div>
+        <div style="position: absolute; bottom: -20px; right: -20px; opacity: 0.04; font-size: 10rem; pointer-events:none; user-select:none;">🌬️</div>
+
+        <!-- Judul -->
+        <h3 style="color: #1976D2; font-family: 'Fredoka One', cursive; font-size: 1.5rem; letter-spacing: 1px; margin-bottom: 1.5rem; position:relative; z-index:2;">PETA KONSEP SIMPERA</h3>
+
+        <!-- Root Node -->
+        <div style="position:relative; z-index:2; display:flex; flex-direction:column; align-items:center;">
+          <div style="background: linear-gradient(135deg, #4facfe, #00f2fe); padding: 1rem 2rem; border-radius: 24px; font-weight: 900; color: #FFF; font-size: 1rem; box-shadow: 0 8px 24px rgba(79,172,254,0.45); text-align:center; min-width: 200px;">
+            <div style="font-size: 2rem; margin-bottom: 0.3rem;">🫁</div>
+            <div>SISTEM PERNAPASAN</div>
+            <div style="font-size: 0.78rem; font-weight: 400; opacity: 0.85; letter-spacing: 1px;">MANUSIA</div>
+          </div>
+
+          <!-- SVG Connector: trunk + 3 branches yang presisi -->
+          <svg width="100%" viewBox="0 0 300 60" preserveAspectRatio="xMidYMid meet" style="overflow:visible; max-width:500px; display:block; margin: 0 auto;">
+            <!-- Trunk vertical -->
+            <line x1="150" y1="0" x2="150" y2="30" stroke="#90CAF9" stroke-width="3" stroke-linecap="round"/>
+            <!-- Horizontal bar -->
+            <line x1="50" y1="30" x2="250" y2="30" stroke="#90CAF9" stroke-width="3" stroke-linecap="round"/>
+            <!-- Left branch -->
+            <line x1="50"  y1="30" x2="50"  y2="60" stroke="#FFCA28" stroke-width="3" stroke-linecap="round"/>
+            <!-- Center branch -->
+            <line x1="150" y1="30" x2="150" y2="60" stroke="#42A5F5" stroke-width="3" stroke-linecap="round"/>
+            <!-- Right branch -->
+            <line x1="250" y1="30" x2="250" y2="60" stroke="#EC407A" stroke-width="3" stroke-linecap="round"/>
+          </svg>
+        </div>
+
+        <!-- 3 Node Cards -->
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; position: relative; z-index: 2; max-width: 640px; margin: 0 auto; padding: 0 4px;">
+
+          <!-- Node 1: Organ Pernapasan -->
+          <div class="peta-node" style="background: #fff; border: 2.5px solid #FFCA28; border-radius: 18px; overflow: hidden; box-shadow: 0 6px 20px rgba(255,202,40,0.18);">
+            <div style="background: linear-gradient(135deg, #FFD54F, #FFCA28); padding: 0.8rem 0.5rem; text-align: center;">
+              <div style="font-size: 2rem; line-height: 1;">🫁</div>
+              <strong style="color: #fff; font-size: 0.85rem; display:block; margin-top: 0.3rem; text-shadow: 0 1px 3px rgba(0,0,0,0.2);">1. Organ<br>Pernapasan</strong>
+            </div>
+            <ul style="text-align: left; font-size: 0.78rem; margin: 0.7rem 0; color: #444; padding: 0 0.8rem 0.7rem 1.4rem; line-height: 1.7;">
+              <li><strong>Hidung:</strong> Saring udara</li>
+              <li><strong>Tenggorokan:</strong> Saluran napas</li>
+              <li><strong>Alveolus:</strong> Tukar oksigen</li>
+            </ul>
+          </div>
+
+          <!-- Node 2: Proses Pernapasan -->
+          <div class="peta-node" style="background: #fff; border: 2.5px solid #42A5F5; border-radius: 18px; overflow: hidden; box-shadow: 0 6px 20px rgba(66,165,245,0.18);">
+            <div style="background: linear-gradient(135deg, #64B5F6, #42A5F5); padding: 0.8rem 0.5rem; text-align: center;">
+              <div style="font-size: 2rem; line-height: 1;">🔄</div>
+              <strong style="color: #fff; font-size: 0.85rem; display:block; margin-top: 0.3rem; text-shadow: 0 1px 3px rgba(0,0,0,0.2);">2. Proses<br>Pernapasan</strong>
+            </div>
+            <ul style="text-align: left; font-size: 0.78rem; margin: 0.7rem 0; color: #444; padding: 0 0.8rem 0.7rem 1.4rem; line-height: 1.7;">
+              <li><strong>Inspirasi:</strong> Tarik napas</li>
+              <li><strong>Ekspirasi:</strong> Hembus napas</li>
+              <li>Pernapasan <strong>Dada / Perut</strong></li>
+            </ul>
+          </div>
+
+          <!-- Node 3: Gangguan & Pemeliharaan -->
+          <div class="peta-node" style="background: #fff; border: 2.5px solid #EC407A; border-radius: 18px; overflow: hidden; box-shadow: 0 6px 20px rgba(236,64,122,0.18);">
+            <div style="background: linear-gradient(135deg, #F06292, #EC407A); padding: 0.8rem 0.5rem; text-align: center;">
+              <div style="font-size: 2rem; line-height: 1;">🛡️</div>
+              <strong style="color: #fff; font-size: 0.85rem; display:block; margin-top: 0.3rem; text-shadow: 0 1px 3px rgba(0,0,0,0.2);">3. Gangguan &<br>Memelihara</strong>
+            </div>
+            <ul style="text-align: left; font-size: 0.78rem; margin: 0.7rem 0; color: #444; padding: 0 0.8rem 0.7rem 1.4rem; line-height: 1.7;">
+              <li><strong>Penyakit:</strong> Asma, Flu, TBC</li>
+              <li>Makan makanan bergizi</li>
+              <li>Olahraga teratur</li>
+            </ul>
+          </div>
+
+        </div>
+      </div>
+      <p style="margin-top: 1.5rem; color: #999; font-size: 0.82rem; text-align:center;">Infografis interaktif ini menunjukkan struktur dari seluruh materi yang akan kamu pelajari di aplikasi ini.</p>
+    </div>
+  </div>
+
+  <!-- ===================== SCREEN: MANFAAT MEMPELAJARI ===================== -->
+  <div id="screen-manfaat" class="screen content-screen">
+    <div class="wave-header" style="background: linear-gradient(135deg, #EC407A, #C2185B);">
+      <div class="wave-header-deco">
+        <div class="hd-circle hd-c1"></div><div class="hd-circle hd-c2"></div><div class="hd-circle hd-c3"></div>
+      </div>
+      <div class="wave-header-inner">
+        <button class="btn-wave-back" onclick="showScreen('screen-menu')">&#8592; Kembali</button>
+        <div class="wave-header-title">
+          <h2>Manfaat Mempelajari</h2>
+          <p>Kenapa belajar Aplikasi SIMPERA itu untung?</p>
+        </div>
+        <div class="wave-header-icon">🌟</div>
+      </div>
+      <div class="wave-header-wave">
+        <svg viewBox="0 0 1200 50" preserveAspectRatio="none"><path d="M0 30 Q300 0 600 25 Q900 50 1200 20 L1200 50 L0 50Z" fill="#F8FAFF" /></svg>
+      </div>
+    </div>
+    <div class="content-body">
+      <div class="info-cards-row" style="flex-wrap: wrap;">
+        <div class="icard" style="--ic:#EC407A; width: 100%;">
+          <div class="icard-icon">💡</div>
+          <h4>Belajar Jadi Menyenangkan</h4>
+          <p>Aplikasi ini dirancang dengan gaya bermain sehingga belajar materi Pernapasan lebih seru dan mudah dipahami, tidak bikin ngantuk!</p>
+        </div>
+        <div class="icard" style="--ic:#29B6F6; width: 100%;">
+          <div class="icard-icon">🫀</div>
+          <h4>Peduli Kesehatan Sendiri</h4>
+          <p>Dengan paham cara kerja organ pernapasannya, kamu jadi tahu kenapa polusi buruk dan lebih termotivasi merawat olahraga serta menjaga kebersihan udara.</p>
+        </div>
+        <div class="icard" style="--ic:#66BB6A; width: 100%;">
+          <div class="icard-icon">📈</div>
+          <h4>Persiapan Ujian Tanpa Stres</h4>
+          <p>Rangkuman, Peta Konsep, dan Latihan Soalnya di-desain supaya kamu siap menghadapi Ujian Sekolah untuk IPAS tanpa perlu hafal buta buku tebal!</p>
+        </div>
+      </div>
     </div>
   </div>
 

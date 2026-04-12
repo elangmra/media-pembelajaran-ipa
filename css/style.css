@@ -30,6 +30,9 @@
 html {
   font-size: 16px;
   scroll-behavior: smooth;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
 }
 body {
   font-family: 'Nunito', sans-serif;
@@ -37,6 +40,16 @@ body {
   color: var(--text-dark);
   min-height: 100vh;
   overflow-x: hidden;
+  margin: 0;
+  padding: 0;
+}
+/* Sembunyikan audio element agar tidak ikut alur dokumen */
+audio {
+  display: none;
+  position: absolute;
+  width: 0;
+  height: 0;
+  pointer-events: none;
 }
 
 /* ==========================================
@@ -295,6 +308,67 @@ body {
   margin-bottom: 1.5rem;
   font-weight: 600;
 }
+
+/* ---- BADGE SEKOLAH ---- */
+.intro-school-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(10px);
+  border: 2px solid rgba(255, 255, 255, 0.9);
+  border-radius: 50px;
+  padding: 0.5rem 1rem;
+  margin-bottom: 0.8rem;
+  box-shadow: 0 4px 15px rgba(26, 35, 126, 0.15);
+  animation: fadeSlideDown 0.6s ease 0.2s both;
+}
+.intro-school-icon {
+  font-size: 1.3rem;
+}
+.intro-school-info {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+}
+.intro-school-name {
+  font-size: 0.88rem;
+  font-weight: 900;
+  color: #1A237E;
+  line-height: 1.2;
+}
+.intro-school-loc {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #546E7A;
+  line-height: 1.2;
+}
+
+/* ---- NAMA PENGEMBANG ---- */
+.intro-developer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.15rem;
+  margin-top: 1rem;
+  background: rgba(255, 255, 255, 0.55);
+  backdrop-filter: blur(8px);
+  border-radius: 12px;
+  padding: 0.5rem 1.2rem;
+  border: 1px solid rgba(255,255,255,0.8);
+  box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+}
+.intro-dev-label {
+  font-size: 0.72rem;
+  color: #546E7A;
+  font-weight: 700;
+}
+.intro-dev-name {
+  font-size: 0.92rem;
+  font-weight: 900;
+  color: #1A237E;
+}
+
 
 /* ==========================================
    BUTTONS
@@ -598,6 +672,34 @@ body {
   color: #9fa8da;
 }
 
+/* ---- KELAS TERKUNCI (locked badge) ---- */
+.kelas-locked-badge {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem 1.4rem;
+  background: linear-gradient(135deg, #E8EAF6, #C5CAE9);
+  border: 2px solid #9FA8DA;
+  border-radius: 20px;
+  cursor: not-allowed;
+  user-select: none;
+  box-shadow: 0 2px 8px rgba(63, 81, 181, 0.1);
+}
+.kelas-badge-icon {
+  font-size: 1.3rem;
+}
+.kelas-badge-text {
+  font-family: 'Nunito', sans-serif;
+  font-size: 1.05rem;
+  font-weight: 900;
+  color: #1A237E;
+  flex: 1;
+}
+.kelas-badge-lock {
+  font-size: 1rem;
+  opacity: 0.6;
+}
+
 /* Button Submit */
 .btn-login-submit {
   margin-top: 1rem;
@@ -869,6 +971,41 @@ body {
   text-align: center;
   padding: 1.2rem 1rem 0.6rem;
 }
+
+/* ---- ANIMASI SISWA SD NEGERI ---- */
+.sd-student-wrap {
+  margin: 0 auto 0.5rem;
+  width: 100px;
+  height: 120px;
+  animation: sdStudentBounce 1.5s ease-in-out infinite alternate;
+}
+.sd-student-svg {
+  width: 100%; height: 100%;
+  filter: drop-shadow(0 8px 12px rgba(0,0,0,0.15));
+}
+.student-arm {
+  transform-origin: 72px 48px;
+  animation: armWave 1.5s ease-in-out infinite alternate;
+}
+.student-arm-left {
+  transform-origin: 28px 48px;
+  animation: armWaveLeft 1.5s ease-in-out infinite alternate;
+}
+
+@keyframes sdStudentBounce {
+  from { transform: translateY(0); }
+  to { transform: translateY(-15px); }
+}
+
+@keyframes armWave {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(-30deg); }
+}
+
+@keyframes armWaveLeft {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(30deg); }
+}
 .menu-title-line1 {
   font-family: 'Fredoka One', cursive;
   font-size: clamp(2rem, 5vw, 3.2rem);
@@ -910,7 +1047,7 @@ body {
   flex-wrap: wrap;
   position: relative;
   z-index: 2;
-  max-width: 600px;
+  max-width: 850px;
   margin: 0 auto;
   width: 100%;
 }
@@ -985,6 +1122,12 @@ body {
 .bmc-rangkuman{ background: linear-gradient(160deg, #BA68C8, #7B1FA2); }
 .bmc-latihan  { background: linear-gradient(160deg, #FFD54F, #F57F17); }
 .bmc-rujukan  { background: linear-gradient(160deg, #4DB6AC, #00695C); }
+
+/* Warna Tambahan */
+.bmc-petunjuk { background: linear-gradient(160deg, #64B5F6, #1565C0); }
+.bmc-tips     { background: linear-gradient(160deg, #FFD54F, #F39C12); }
+.bmc-peta     { background: linear-gradient(160deg, #81C784, #1B5E20); }
+.bmc-manfaat  { background: linear-gradient(160deg, #F06292, #C2185B); }
 
 @media (max-width: 600px) {
   .bigmenu-card { width: 95px; min-height: 130px; }
@@ -1218,6 +1361,7 @@ body {
 .mtc-organ     { background: linear-gradient(135deg, #f953c6, #b91d73); }
 .mtc-proses    { background: linear-gradient(135deg, #4facfe, #00f2fe); }
 .mtc-jenis     { background: linear-gradient(135deg, #fa8231, #f7971e); }
+.mtc-manfaat   { background: linear-gradient(135deg, #EC407A, #C2185B); }
 
 @media (max-width: 500px) {
   .materi-topic-grid { grid-template-columns: 1fr; }
