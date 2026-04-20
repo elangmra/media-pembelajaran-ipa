@@ -1,15 +1,13 @@
 <?php
 session_start();
 
-// ── Konfigurasi ───────────────────────────────────────────────────────────────
 define('ADMIN_USER', 'guru');
-define('ADMIN_PASS', 'ganti_password_ini');  // GANTI sebelum deploy ke VPS!
+define('ADMIN_PASS', 'ganti_password_ini');
 
-// ── Koneksi DB ────────────────────────────────────────────────────────────────
 define('DB_HOST', 'localhost');
 define('DB_NAME', 'media_pembelajaran');
 define('DB_USER', 'root');
-define('DB_PASS', '');  // sesuaikan dengan password MySQL di VPS
+define('DB_PASS', '');
 
 function getDB() {
     static $pdo;
@@ -23,7 +21,6 @@ function getDB() {
     return $pdo;
 }
 
-// ── Auth ──────────────────────────────────────────────────────────────────────
 if (isset($_POST['logout'])) {
     session_destroy();
     header('Location: admin.php');
@@ -41,16 +38,43 @@ if (isset($_POST['username'])) {
 
 $isLoggedIn = !empty($_SESSION['admin']);
 
-// ── Data (hanya jika login) ───────────────────────────────────────────────────
+function predikat(int $skor): string {
+    if ($skor >= 85) return 'Sangat Baik';
+    if ($skor >= 70) return 'Baik';
+    if ($skor >= 55) return 'Cukup';
+    return 'Perlu Bimbingan';
+}
+
+function predikatClass(int $skor): string {
+    if ($skor >= 85) return 'pred-a';
+    if ($skor >= 70) return 'pred-b';
+    if ($skor >= 55) return 'pred-c';
+    return 'pred-d';
+}
+
+function sentimen(string $teks): string {
+    $lower = mb_strtolower($teks);
+    $neg = ['sulit','bingung','susah','tidak mengerti','membosankan','kurang','tidak paham','capek','lelah'];
+    $pos = ['senang','paham','suka','menarik','bagus','keren','mudah','jelas','mantap','hebat','seru'];
+    foreach ($neg as $k) { if (str_contains($lower, $k)) return 'negatif'; }
+    foreach ($pos as $k) { if (str_contains($lower, $k)) return 'positif'; }
+    return 'netral';
+}
+
+function rekomendasiTopik(int $skor): string {
+    if ($skor < 55) return 'Ulang semua topik: organ, proses, jenis, &amp; gangguan pernapasan';
+    return 'Ulang materi proses pernapasan &amp; gangguan pernapasan';
+}
+
 if ($isLoggedIn) {
     $pdo = getDB();
-    $totalSiswa   = $pdo->query('SELECT COUNT(*) FROM leaderboard')->fetchColumn();
-    $avgSkor      = $pdo->query('SELECT ROUND(AVG(skor),1) FROM leaderboard')->fetchColumn() ?: 0;
-    $totalRef     = $pdo->query('SELECT COUNT(*) FROM refleksi')->fetchColumn();
-    $totalPend    = $pdo->query('SELECT COUNT(*) FROM pendapat')->fetchColumn();
-    $leaderRows   = $pdo->query('SELECT nama, kelas, skor, created_at FROM leaderboard ORDER BY skor DESC, created_at ASC')->fetchAll(PDO::FETCH_ASSOC);
-    $refleksiRows = $pdo->query('SELECT nama, kelas, isi, created_at FROM refleksi ORDER BY created_at DESC')->fetchAll(PDO::FETCH_ASSOC);
-    $pendapatRows = $pdo->query('SELECT nama, kelas, video_id, isi, created_at FROM pendapat ORDER BY created_at DESC')->fetchAll(PDO::FETCH_ASSOC);
+    $pretestRows       = $pdo->query("SELECT nama, kelas, skor, created_at FROM leaderboard WHERE tipe='pretest'  ORDER BY created_at DESC")->fetchAll(PDO::FETCH_ASSOC);
+    $posttestRows      = $pdo->query("SELECT nama, kelas, skor, created_at FROM leaderboard WHERE tipe='posttest' ORDER BY skor DESC, created_at ASC")->fetchAll(PDO::FETCH_ASSOC);
+    $refleksiRows      = $pdo->query("SELECT nama, kelas, isi, created_at FROM refleksi ORDER BY created_at DESC")->fetchAll(PDO::FETCH_ASSOC);
+    $rekomendasiAuto   = $pdo->query("SELECT nama, kelas, skor FROM leaderboard WHERE tipe='posttest' AND skor < 70 ORDER BY skor ASC")->fetchAll(PDO::FETCH_ASSOC);
+    $rekomendasiManual = $pdo->query("SELECT id, nama, kelas, catatan_guru, skor_ref, created_at FROM rekomendasi ORDER BY created_at DESC")->fetchAll(PDO::FETCH_ASSOC);
+    $avgPretest  = count($pretestRows)  ? round(array_sum(array_column($pretestRows,  'skor')) / count($pretestRows),  1) : 0;
+    $avgPosttest = count($posttestRows) ? round(array_sum(array_column($posttestRows, 'skor')) / count($posttestRows), 1) : 0;
 }
 
 function e($s) { return htmlspecialchars($s, ENT_QUOTES, 'UTF-8'); }
@@ -60,96 +84,171 @@ function e($s) { return htmlspecialchars($s, ENT_QUOTES, 'UTF-8'); }
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Admin Panel – Media Pembelajaran</title>
+<title>Dashboard Guru – Media Pembelajaran</title>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: 'Nunito', sans-serif; background: #F8FAFF; color: #2d3748; min-height: 100vh; }
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Nunito', sans-serif; background: #F0F4FF; color: #2d3748; min-height: 100vh; }
 
-  /* ── Topbar ── */
-  .topbar {
-    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-    color: white; padding: 1rem 1.5rem;
-    display: flex; justify-content: space-between; align-items: center;
-    box-shadow: 0 2px 12px rgba(79,172,254,0.3);
-  }
-  .topbar h1 { font-size: 1.05rem; font-weight: 800; }
-  .btn-logout {
-    background: rgba(255,255,255,0.2); color: white; border: none;
-    padding: 0.4rem 1rem; border-radius: 8px; cursor: pointer;
-    font-family: inherit; font-weight: 700; font-size: 0.85rem;
-  }
-  .btn-logout:hover { background: rgba(255,255,255,0.35); }
+/* ── Topbar ── */
+.topbar {
+  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+  color: white; padding: 1rem 1.5rem;
+  display: flex; justify-content: space-between; align-items: center;
+  box-shadow: 0 2px 12px rgba(79,172,254,0.3);
+  position: sticky; top: 0; z-index: 100;
+}
+.topbar h1 { font-size: 1rem; font-weight: 800; }
+.btn-logout {
+  background: rgba(255,255,255,0.2); color: white; border: none;
+  padding: 0.4rem 1rem; border-radius: 8px; cursor: pointer;
+  font-family: inherit; font-weight: 700; font-size: 0.85rem;
+}
+.btn-logout:hover { background: rgba(255,255,255,0.35); }
 
-  /* ── Login ── */
-  .login-wrap { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 1rem; }
-  .login-card {
-    background: white; border-radius: 20px; padding: 2.5rem;
-    width: 100%; max-width: 380px;
-    box-shadow: 0 8px 32px rgba(0,0,0,0.1);
-  }
-  .login-logo { text-align: center; font-size: 2.5rem; margin-bottom: 0.5rem; }
-  .login-card h2 { text-align: center; color: #4facfe; margin-bottom: 1.8rem; font-size: 1.3rem; }
-  .field { margin-bottom: 1.1rem; }
-  .field label { display: block; font-size: 0.85rem; font-weight: 700; color: #555; margin-bottom: 0.35rem; }
-  .field input {
-    width: 100%; padding: 0.65rem 0.9rem;
-    border: 2px solid #e2e8f0; border-radius: 10px;
-    font-family: inherit; font-size: 0.95rem; transition: border-color .2s;
-  }
-  .field input:focus { outline: none; border-color: #4facfe; }
-  .btn-login {
-    width: 100%; padding: 0.75rem;
-    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-    color: white; border: none; border-radius: 12px;
-    font-family: inherit; font-weight: 800; font-size: 1rem;
-    cursor: pointer; margin-top: 0.5rem; transition: opacity .2s;
-  }
-  .btn-login:hover { opacity: 0.9; }
-  .error-msg { color: #e53e3e; font-size: 0.85rem; margin-top: 0.75rem; text-align: center; }
+/* ── Login ── */
+.login-wrap { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 1rem; }
+.login-card {
+  background: white; border-radius: 20px; padding: 2.5rem;
+  width: 100%; max-width: 380px; box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+}
+.login-logo { text-align: center; font-size: 2.5rem; margin-bottom: 0.5rem; }
+.login-card h2 { text-align: center; color: #4facfe; margin-bottom: 1.8rem; font-size: 1.3rem; }
+.field { margin-bottom: 1.1rem; }
+.field label { display: block; font-size: 0.85rem; font-weight: 700; color: #555; margin-bottom: 0.35rem; }
+.field input {
+  width: 100%; padding: 0.65rem 0.9rem;
+  border: 2px solid #e2e8f0; border-radius: 10px;
+  font-family: inherit; font-size: 0.95rem; transition: border-color .2s;
+}
+.field input:focus { outline: none; border-color: #4facfe; }
+.btn-login {
+  width: 100%; padding: 0.75rem;
+  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+  color: white; border: none; border-radius: 12px;
+  font-family: inherit; font-weight: 800; font-size: 1rem;
+  cursor: pointer; margin-top: 0.5rem; transition: opacity .2s;
+}
+.btn-login:hover { opacity: 0.9; }
+.error-msg { color: #e53e3e; font-size: 0.85rem; margin-top: 0.75rem; text-align: center; }
 
-  /* ── Dashboard ── */
-  .container { max-width: 960px; margin: 0 auto; padding: 1.5rem 1rem; }
+/* ── Layout ── */
+.container { max-width: 1000px; margin: 0 auto; padding: 1.5rem 1rem 3rem; }
 
-  .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
-  .stat-card {
-    background: white; border-radius: 14px; padding: 1.3rem; text-align: center;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.06);
-  }
-  .stat-num { font-size: 2.2rem; font-weight: 800; line-height: 1; }
-  .stat-label { font-size: 0.78rem; color: #888; margin-top: 0.3rem; }
+/* ── Stat Cards ── */
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; margin-bottom: 1.8rem; }
+.stat-card {
+  background: white; border-radius: 14px; padding: 1.3rem; text-align: center;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+}
+.stat-num { font-size: 2.2rem; font-weight: 800; line-height: 1; }
+.stat-label { font-size: 0.78rem; color: #888; margin-top: 0.3rem; font-weight: 600; }
 
-  .section { background: white; border-radius: 14px; margin-bottom: 1.5rem; box-shadow: 0 2px 10px rgba(0,0,0,0.06); overflow: hidden; }
-  .section-title {
-    padding: 1rem 1.2rem; font-weight: 800; font-size: 1rem;
-    background: #f7fafc; border-bottom: 1px solid #e2e8f0;
-    display: flex; justify-content: space-between; align-items: center;
-  }
-  .section-count { font-size: 0.78rem; color: #aaa; font-weight: 600; }
+/* ── Tab Nav ── */
+.tab-nav {
+  display: flex; gap: 0.5rem; margin-bottom: 1.5rem;
+  background: white; border-radius: 14px; padding: 0.5rem;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+}
+.tab-btn {
+  flex: 1; padding: 0.65rem 1rem; border: none; border-radius: 10px;
+  background: transparent; font-family: inherit; font-size: 0.9rem;
+  font-weight: 700; color: #888; cursor: pointer; transition: all .2s;
+}
+.tab-btn:hover { background: #f0f4ff; color: #4facfe; }
+.tab-btn.active { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white; }
+@media (max-width: 520px) { .tab-btn { font-size: 0.78rem; padding: 0.55rem 0.4rem; } }
 
-  table { width: 100%; border-collapse: collapse; font-size: 0.87rem; }
-  th { background: #f7fafc; padding: 0.65rem 1rem; text-align: left; font-weight: 700; color: #555; border-bottom: 1px solid #e2e8f0; }
-  td { padding: 0.6rem 1rem; border-bottom: 1px solid #f0f0f0; vertical-align: top; }
-  tr:last-child td { border-bottom: none; }
-  tr:hover td { background: #fafafa; }
-  .empty-msg { padding: 1.5rem; text-align: center; color: #bbb; font-style: italic; }
+/* ── Tab Content ── */
+.tab-pane { display: none; }
+.tab-pane.active { display: block; }
 
-  .badge-skor {
-    display: inline-block; padding: 2px 10px; border-radius: 20px;
-    background: #FFF9C4; color: #b7791f; font-weight: 700; font-size: 0.82rem;
-  }
-  .text-muted { color: #aaa; font-size: 0.8rem; }
-  .isi-cell { max-width: 280px; word-break: break-word; }
+/* ── Section Card ── */
+.section { background: white; border-radius: 14px; margin-bottom: 1.5rem; box-shadow: 0 2px 10px rgba(0,0,0,0.06); overflow: hidden; }
+.section-title {
+  padding: 1rem 1.2rem; font-weight: 800; font-size: 1rem;
+  background: #f7fafc; border-bottom: 1px solid #e2e8f0;
+  display: flex; justify-content: space-between; align-items: center;
+}
+.section-count { font-size: 0.78rem; color: #aaa; font-weight: 600; }
+
+/* ── Table ── */
+table { width: 100%; border-collapse: collapse; font-size: 0.87rem; }
+th { background: #f7fafc; padding: 0.65rem 1rem; text-align: left; font-weight: 700; color: #555; border-bottom: 1px solid #e2e8f0; }
+td { padding: 0.6rem 1rem; border-bottom: 1px solid #f0f0f0; vertical-align: top; }
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: #fafbff; }
+.empty-msg { padding: 1.5rem; text-align: center; color: #bbb; font-style: italic; }
+.text-muted { color: #aaa; font-size: 0.8rem; }
+.isi-cell { max-width: 260px; word-break: break-word; }
+
+/* ── Predikat Badges ── */
+.pred { display: inline-block; padding: 2px 10px; border-radius: 20px; font-weight: 700; font-size: 0.78rem; white-space: nowrap; }
+.pred-a { background: #C6F6D5; color: #276749; }
+.pred-b { background: #BEE3F8; color: #2a69ac; }
+.pred-c { background: #FEFCBF; color: #975a16; }
+.pred-d { background: #FED7D7; color: #9b2c2c; }
+
+/* ── Sentimen Badges ── */
+.sent { display: inline-block; padding: 2px 10px; border-radius: 20px; font-weight: 700; font-size: 0.78rem; white-space: nowrap; }
+.sent-positif { background: #C6F6D5; color: #276749; }
+.sent-netral  { background: #EDF2F7; color: #4a5568; }
+.sent-negatif { background: #FED7D7; color: #9b2c2c; }
+
+/* ── Rekomendasi Form ── */
+.reko-form {
+  padding: 1.2rem;
+  display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;
+}
+.reko-form .full { grid-column: 1 / -1; }
+.reko-form label { display: block; font-size: 0.82rem; font-weight: 700; color: #555; margin-bottom: 0.3rem; }
+.reko-form input, .reko-form textarea {
+  width: 100%; padding: 0.6rem 0.8rem;
+  border: 2px solid #e2e8f0; border-radius: 10px;
+  font-family: inherit; font-size: 0.9rem; transition: border-color .2s;
+}
+.reko-form input:focus, .reko-form textarea:focus { outline: none; border-color: #4facfe; }
+.reko-form textarea { min-height: 80px; resize: vertical; }
+.btn-save {
+  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+  color: white; border: none; border-radius: 10px;
+  padding: 0.65rem 1.5rem; font-family: inherit;
+  font-weight: 800; font-size: 0.9rem; cursor: pointer; transition: opacity .2s;
+}
+.btn-save:hover { opacity: 0.85; }
+.btn-hapus {
+  background: #FED7D7; color: #c53030; border: none;
+  border-radius: 8px; padding: 3px 12px; font-family: inherit;
+  font-weight: 700; font-size: 0.8rem; cursor: pointer;
+}
+.btn-hapus:hover { background: #fc8181; color: white; }
+@media (max-width: 520px) { .reko-form { grid-template-columns: 1fr; } }
+
+/* ── Alert strip ── */
+.alert-strip {
+  background: #FFF5F5; border-left: 4px solid #fc8181;
+  padding: 0.75rem 1.2rem; font-size: 0.85rem; color: #742a2a;
+  margin: 0 1.2rem 1rem; border-radius: 0 8px 8px 0;
+}
+
+/* ── Toast ── */
+#admin-toast {
+  position: fixed; bottom: 1.5rem; left: 50%; transform: translateX(-50%);
+  background: #2d3748; color: white; padding: 0.65rem 1.4rem;
+  border-radius: 12px; font-weight: 700; font-size: 0.9rem;
+  opacity: 0; transition: opacity .3s; pointer-events: none; z-index: 999;
+}
+#admin-toast.show { opacity: 1; }
 </style>
 </head>
 <body>
 
 <?php if (!$isLoggedIn): ?>
-<!-- ═══ LOGIN ═══════════════════════════════════════════════════════════════ -->
+<!-- ═══ LOGIN ═══ -->
 <div class="login-wrap">
   <div class="login-card">
     <div class="login-logo">🏫</div>
-    <h2>Admin Panel</h2>
+    <h2>Dashboard Guru</h2>
     <form method="POST">
       <div class="field">
         <label for="username">Username</label>
@@ -168,9 +267,9 @@ function e($s) { return htmlspecialchars($s, ENT_QUOTES, 'UTF-8'); }
 </div>
 
 <?php else: ?>
-<!-- ═══ DASHBOARD ════════════════════════════════════════════════════════════ -->
+<!-- ═══ DASHBOARD ═══ -->
 <div class="topbar">
-  <h1>🏫 Admin Panel — Media Pembelajaran Sistem Pernapasan</h1>
+  <h1>🏫 Dashboard Guru — Sistem Pernapasan</h1>
   <form method="POST" style="margin:0">
     <button type="submit" name="logout" value="1" class="btn-logout">Logout</button>
   </form>
@@ -181,113 +280,306 @@ function e($s) { return htmlspecialchars($s, ENT_QUOTES, 'UTF-8'); }
   <!-- Stat Cards -->
   <div class="stats">
     <div class="stat-card">
-      <div class="stat-num" style="color:#4facfe"><?= (int)$totalSiswa ?></div>
-      <div class="stat-label">Total Pengumpul Skor</div>
+      <div class="stat-num" style="color:#FF8A65"><?= count($pretestRows) ?></div>
+      <div class="stat-label">Siswa PreTest</div>
     </div>
     <div class="stat-card">
-      <div class="stat-num" style="color:#38a169"><?= $avgSkor ?></div>
-      <div class="stat-label">Rata-rata Skor PG</div>
+      <div class="stat-num" style="color:#e64a19"><?= $avgPretest ?></div>
+      <div class="stat-label">Rata-rata Skor PreTest</div>
     </div>
     <div class="stat-card">
-      <div class="stat-num" style="color:#805ad5"><?= (int)$totalRef ?></div>
-      <div class="stat-label">Refleksi Masuk</div>
+      <div class="stat-num" style="color:#4facfe"><?= count($posttestRows) ?></div>
+      <div class="stat-label">Siswa PostTest</div>
     </div>
     <div class="stat-card">
-      <div class="stat-num" style="color:#e53e3e"><?= (int)$totalPend ?></div>
-      <div class="stat-label">Pendapat Video</div>
+      <div class="stat-num" style="color:#38a169"><?= $avgPosttest ?></div>
+      <div class="stat-label">Rata-rata Skor PostTest</div>
     </div>
   </div>
 
-  <!-- Leaderboard -->
-  <div class="section">
-    <div class="section-title">
-      🏆 Leaderboard PG
-      <span class="section-count"><?= count($leaderRows) ?> entri</span>
-    </div>
-    <?php if ($leaderRows): ?>
-    <div style="overflow-x:auto">
-      <table>
-        <thead>
-          <tr><th>#</th><th>Nama</th><th>Kelas</th><th>Skor</th><th>Waktu</th></tr>
-        </thead>
-        <tbody>
-          <?php foreach ($leaderRows as $i => $r): ?>
-          <tr>
-            <td class="text-muted"><?= $i + 1 ?></td>
-            <td><?= e($r['nama']) ?></td>
-            <td><?= e($r['kelas']) ?></td>
-            <td><span class="badge-skor"><?= (int)$r['skor'] ?></span></td>
-            <td class="text-muted"><?= e($r['created_at']) ?></td>
-          </tr>
-          <?php endforeach; ?>
-        </tbody>
-      </table>
-    </div>
-    <?php else: ?>
-      <div class="empty-msg">Belum ada data.</div>
-    <?php endif; ?>
+  <!-- Tab Nav -->
+  <div class="tab-nav">
+    <button class="tab-btn" data-tab="penilaian"   onclick="switchTab('penilaian')">📊 Penilaian</button>
+    <button class="tab-btn" data-tab="refleksi"    onclick="switchTab('refleksi')">💭 Umpan Balik</button>
+    <button class="tab-btn" data-tab="rekomendasi" onclick="switchTab('rekomendasi')">💡 Rekomendasi</button>
   </div>
 
-  <!-- Refleksi -->
-  <div class="section">
-    <div class="section-title">
-      💭 Refleksi Siswa
-      <span class="section-count"><?= count($refleksiRows) ?> entri</span>
-    </div>
-    <?php if ($refleksiRows): ?>
-    <div style="overflow-x:auto">
-      <table>
-        <thead>
-          <tr><th>Nama</th><th>Kelas</th><th>Isi Refleksi</th><th>Waktu</th></tr>
-        </thead>
-        <tbody>
-          <?php foreach ($refleksiRows as $r): ?>
-          <tr>
-            <td><?= e($r['nama']) ?></td>
-            <td><?= e($r['kelas']) ?></td>
-            <td class="isi-cell"><?= e($r['isi']) ?></td>
-            <td class="text-muted" style="white-space:nowrap"><?= e($r['created_at']) ?></td>
-          </tr>
-          <?php endforeach; ?>
-        </tbody>
-      </table>
-    </div>
-    <?php else: ?>
-      <div class="empty-msg">Belum ada data.</div>
-    <?php endif; ?>
-  </div>
+  <!-- ═══ TAB: PENILAIAN ═══ -->
+  <div id="tab-penilaian" class="tab-pane">
 
-  <!-- Pendapat Video -->
-  <div class="section">
-    <div class="section-title">
-      🎬 Pendapat Video
-      <span class="section-count"><?= count($pendapatRows) ?> entri</span>
+    <div class="section">
+      <div class="section-title">
+        🟠 Rekap PreTest
+        <span class="section-count"><?= count($pretestRows) ?> siswa</span>
+      </div>
+      <?php if ($pretestRows): ?>
+      <div style="overflow-x:auto">
+        <table>
+          <thead><tr><th>#</th><th>Nama</th><th>Kelas</th><th>Skor</th><th>Predikat</th><th>Waktu</th></tr></thead>
+          <tbody>
+            <?php foreach ($pretestRows as $i => $r): $s = (int)$r['skor']; ?>
+            <tr>
+              <td class="text-muted"><?= $i+1 ?></td>
+              <td><?= e($r['nama']) ?></td>
+              <td><?= e($r['kelas']) ?></td>
+              <td><strong><?= $s ?></strong></td>
+              <td><span class="pred <?= predikatClass($s) ?>"><?= predikat($s) ?></span></td>
+              <td class="text-muted" style="white-space:nowrap"><?= e($r['created_at']) ?></td>
+            </tr>
+            <?php endforeach; ?>
+          </tbody>
+        </table>
+      </div>
+      <?php else: ?><div class="empty-msg">Belum ada data PreTest.</div><?php endif; ?>
     </div>
-    <?php if ($pendapatRows): ?>
-    <div style="overflow-x:auto">
-      <table>
-        <thead>
-          <tr><th>Nama</th><th>Kelas</th><th>Video ID</th><th>Isi Pendapat</th><th>Waktu</th></tr>
-        </thead>
-        <tbody>
-          <?php foreach ($pendapatRows as $r): ?>
-          <tr>
-            <td><?= e($r['nama']) ?></td>
-            <td><?= e($r['kelas']) ?></td>
-            <td class="text-muted" style="font-size:0.75rem"><?= e($r['video_id']) ?></td>
-            <td class="isi-cell"><?= e($r['isi']) ?></td>
-            <td class="text-muted" style="white-space:nowrap"><?= e($r['created_at']) ?></td>
-          </tr>
-          <?php endforeach; ?>
-        </tbody>
-      </table>
-    </div>
-    <?php else: ?>
-      <div class="empty-msg">Belum ada data.</div>
-    <?php endif; ?>
-  </div>
 
-</div>
+    <div class="section">
+      <div class="section-title">
+        🔵 Rekap PostTest
+        <span class="section-count"><?= count($posttestRows) ?> siswa</span>
+      </div>
+      <?php if ($posttestRows): ?>
+      <div style="overflow-x:auto">
+        <table>
+          <thead><tr><th>#</th><th>Nama</th><th>Kelas</th><th>Skor</th><th>Predikat</th><th>Waktu</th></tr></thead>
+          <tbody>
+            <?php foreach ($posttestRows as $i => $r): $s = (int)$r['skor']; ?>
+            <tr>
+              <td class="text-muted"><?= $i+1 ?></td>
+              <td><?= e($r['nama']) ?></td>
+              <td><?= e($r['kelas']) ?></td>
+              <td><strong><?= $s ?></strong></td>
+              <td><span class="pred <?= predikatClass($s) ?>"><?= predikat($s) ?></span></td>
+              <td class="text-muted" style="white-space:nowrap"><?= e($r['created_at']) ?></td>
+            </tr>
+            <?php endforeach; ?>
+          </tbody>
+        </table>
+      </div>
+      <?php else: ?><div class="empty-msg">Belum ada data PostTest.</div><?php endif; ?>
+    </div>
+
+  </div><!-- /tab-penilaian -->
+
+  <!-- ═══ TAB: REFLEKSI ═══ -->
+  <div id="tab-refleksi" class="tab-pane">
+    <div class="section">
+      <div class="section-title">
+        💭 Umpan Balik Siswa (Refleksi)
+        <span class="section-count"><?= count($refleksiRows) ?> entri</span>
+      </div>
+      <?php if ($refleksiRows): ?>
+      <div style="overflow-x:auto">
+        <table>
+          <thead><tr><th>Nama</th><th>Kelas</th><th>Isi Refleksi</th><th>Sentimen</th><th>Waktu</th></tr></thead>
+          <tbody>
+            <?php foreach ($refleksiRows as $r):
+              $sent = sentimen($r['isi']);
+            ?>
+            <tr>
+              <td><?= e($r['nama']) ?></td>
+              <td><?= e($r['kelas']) ?></td>
+              <td class="isi-cell"><?= e($r['isi']) ?></td>
+              <td><span class="sent sent-<?= $sent ?>"><?= ucfirst($sent) ?></span></td>
+              <td class="text-muted" style="white-space:nowrap"><?= e($r['created_at']) ?></td>
+            </tr>
+            <?php endforeach; ?>
+          </tbody>
+        </table>
+      </div>
+      <?php else: ?><div class="empty-msg">Belum ada refleksi masuk.</div><?php endif; ?>
+    </div>
+  </div><!-- /tab-refleksi -->
+
+  <!-- ═══ TAB: REKOMENDASI ═══ -->
+  <div id="tab-rekomendasi" class="tab-pane">
+
+    <!-- Otomatis -->
+    <div class="section">
+      <div class="section-title">
+        ⚠️ Siswa Perlu Bimbingan (PostTest &lt; 70)
+        <span class="section-count"><?= count($rekomendasiAuto) ?> siswa</span>
+      </div>
+      <?php if ($rekomendasiAuto): ?>
+        <div class="alert-strip">Terdapat <?= count($rekomendasiAuto) ?> siswa dengan nilai posttest di bawah 70. Pertimbangkan untuk memberikan bimbingan tambahan.</div>
+        <div style="overflow-x:auto">
+          <table>
+            <thead><tr><th>Nama</th><th>Kelas</th><th>Skor</th><th>Status</th><th>Topik Disarankan</th></tr></thead>
+            <tbody>
+              <?php foreach ($rekomendasiAuto as $r): $s = (int)$r['skor']; ?>
+              <tr>
+                <td><?= e($r['nama']) ?></td>
+                <td><?= e($r['kelas']) ?></td>
+                <td><strong style="color:#e53e3e"><?= $s ?></strong></td>
+                <td><span class="pred pred-d">Perlu Bimbingan</span></td>
+                <td style="font-size:0.82rem; color:#555"><?= rekomendasiTopik($s) ?></td>
+              </tr>
+              <?php endforeach; ?>
+            </tbody>
+          </table>
+        </div>
+      <?php else: ?><div class="empty-msg">Semua siswa sudah mencapai nilai minimal 70. ✅</div><?php endif; ?>
+    </div>
+
+    <!-- Manual: Form -->
+    <div class="section">
+      <div class="section-title">✏️ Catatan Guru (Manual)</div>
+      <form class="reko-form" id="form-reko" onsubmit="submitReko(event)">
+        <div>
+          <label>Nama Siswa</label>
+          <input type="text" id="reko-nama" placeholder="Nama siswa..." required>
+        </div>
+        <div>
+          <label>Kelas</label>
+          <input type="text" id="reko-kelas" placeholder="Contoh: 5A" required>
+        </div>
+        <div>
+          <label>Skor Referensi <small style="font-weight:400;color:#aaa">(opsional)</small></label>
+          <input type="number" id="reko-skor" min="0" max="100" placeholder="0–100">
+        </div>
+        <div></div>
+        <div class="full">
+          <label>Catatan / Rekomendasi</label>
+          <textarea id="reko-catatan" placeholder="Tuliskan catatan atau rekomendasi belajar untuk siswa ini..." required></textarea>
+        </div>
+        <div class="full" style="display:flex;justify-content:flex-end">
+          <button type="submit" class="btn-save">💾 Simpan Catatan</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Manual: Tabel -->
+    <div class="section">
+      <div class="section-title">
+        📋 Daftar Catatan Tersimpan
+        <span class="section-count" id="reko-count"><?= count($rekomendasiManual) ?> catatan</span>
+      </div>
+      <div id="reko-table-wrap">
+      <?php if ($rekomendasiManual): ?>
+        <div style="overflow-x:auto">
+          <table id="reko-table">
+            <thead><tr><th>Nama</th><th>Kelas</th><th>Catatan</th><th>Skor Ref</th><th>Waktu</th><th></th></tr></thead>
+            <tbody id="reko-tbody">
+              <?php foreach ($rekomendasiManual as $r): ?>
+              <tr id="reko-row-<?= (int)$r['id'] ?>">
+                <td><?= e($r['nama']) ?></td>
+                <td><?= e($r['kelas']) ?></td>
+                <td class="isi-cell"><?= e($r['catatan_guru']) ?></td>
+                <td class="text-muted"><?= $r['skor_ref'] !== null ? (int)$r['skor_ref'] : '—' ?></td>
+                <td class="text-muted" style="white-space:nowrap"><?= e($r['created_at']) ?></td>
+                <td><button class="btn-hapus" onclick="hapusReko(<?= (int)$r['id'] ?>)">Hapus</button></td>
+              </tr>
+              <?php endforeach; ?>
+            </tbody>
+          </table>
+        </div>
+      <?php else: ?>
+        <div class="empty-msg" id="reko-empty">Belum ada catatan tersimpan.</div>
+      <?php endif; ?>
+      </div>
+    </div>
+
+  </div><!-- /tab-rekomendasi -->
+
+</div><!-- /container -->
+
+<div id="admin-toast"></div>
+
+<script>
+function switchTab(name) {
+  document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  document.querySelector('[data-tab="' + name + '"]').classList.add('active');
+  location.hash = name;
+}
+
+(function() {
+  const hash = location.hash.replace('#', '');
+  switchTab(['penilaian','refleksi','rekomendasi'].includes(hash) ? hash : 'penilaian');
+})();
+
+function showToast(msg) {
+  const t = document.getElementById('admin-toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+let rekoCount = <?= count($rekomendasiManual) ?>;
+
+function submitReko(e) {
+  e.preventDefault();
+  const nama    = document.getElementById('reko-nama').value.trim();
+  const kelas   = document.getElementById('reko-kelas').value.trim();
+  const catatan = document.getElementById('reko-catatan').value.trim();
+  const skor    = document.getElementById('reko-skor').value;
+
+  fetch('api/submit_rekomendasi.php', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ nama, kelas, catatan_guru: catatan, skor_ref: skor })
+  })
+  .then(r => r.json())
+  .then(data => {
+    if (!data.success) { showToast('Gagal menyimpan: ' + (data.error || '')); return; }
+
+    const empty = document.getElementById('reko-empty');
+    if (empty) empty.remove();
+
+    let tbody = document.getElementById('reko-tbody');
+    if (!tbody) {
+      document.getElementById('reko-table-wrap').innerHTML =
+        '<div style="overflow-x:auto"><table id="reko-table"><thead><tr><th>Nama</th><th>Kelas</th><th>Catatan</th><th>Skor Ref</th><th>Waktu</th><th></th></tr></thead><tbody id="reko-tbody"></tbody></table></div>';
+      tbody = document.getElementById('reko-tbody');
+    }
+
+    const tr = document.createElement('tr');
+    tr.id = 'reko-row-' + data.id;
+    tr.innerHTML = `
+      <td>${escH(nama)}</td><td>${escH(kelas)}</td>
+      <td class="isi-cell">${escH(catatan)}</td>
+      <td class="text-muted">${skor !== '' ? parseInt(skor) : '—'}</td>
+      <td class="text-muted">Baru saja</td>
+      <td><button class="btn-hapus" onclick="hapusReko(${data.id})">Hapus</button></td>`;
+    tbody.prepend(tr);
+
+    rekoCount++;
+    document.getElementById('reko-count').textContent = rekoCount + ' catatan';
+    document.getElementById('form-reko').reset();
+    showToast('Catatan berhasil disimpan!');
+  })
+  .catch(() => showToast('Gagal terhubung ke server.'));
+}
+
+function hapusReko(id) {
+  if (!confirm('Hapus catatan ini?')) return;
+  fetch('api/delete_rekomendasi.php', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ id })
+  })
+  .then(r => r.json())
+  .then(data => {
+    if (!data.success) { showToast('Gagal menghapus.'); return; }
+    const row = document.getElementById('reko-row-' + id);
+    if (row) row.remove();
+    rekoCount = Math.max(0, rekoCount - 1);
+    document.getElementById('reko-count').textContent = rekoCount + ' catatan';
+    if (rekoCount === 0) {
+      document.getElementById('reko-table-wrap').innerHTML =
+        '<div class="empty-msg" id="reko-empty">Belum ada catatan tersimpan.</div>';
+    }
+    showToast('Catatan dihapus.');
+  })
+  .catch(() => showToast('Gagal terhubung ke server.'));
+}
+
+function escH(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+</script>
+
 <?php endif; ?>
 </body>
 </html>
