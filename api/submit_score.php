@@ -18,6 +18,7 @@ $data  = json_decode(file_get_contents('php://input'), true);
 $nama  = trim(strip_tags($data['nama']  ?? ''));
 $kelas = trim(strip_tags($data['kelas'] ?? ''));
 $skor  = isset($data['skor']) ? intval($data['skor']) : -1;
+$tipe  = ($data['tipe'] ?? '') === 'pretest' ? 'pretest' : 'posttest';
 
 if (!$nama || !$kelas || $skor < 0 || $skor > 100) {
     http_response_code(400);
@@ -25,7 +26,7 @@ if (!$nama || !$kelas || $skor < 0 || $skor > 100) {
     exit;
 }
 
-$stmt = $pdo->prepare('INSERT INTO leaderboard (nama, kelas, skor) VALUES (?, ?, ?)');
-$stmt->execute([$nama, $kelas, $skor]);
+$stmt = $pdo->prepare('INSERT INTO leaderboard (nama, kelas, skor, tipe) VALUES (?, ?, ?, ?)');
+$stmt->execute([$nama, $kelas, $skor, $tipe]);
 
 echo json_encode(['success' => true]);
