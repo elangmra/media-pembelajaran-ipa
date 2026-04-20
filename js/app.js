@@ -359,6 +359,7 @@ function pretestNext() {
     });
     pretestDone = true;
     const score = Math.round((correct / pretestQuestions.length) * 100);
+    saveScoreToServer(state.quiz.namaTemp, state.user.kelas || '-', score, 'pretest');
     showScore(score, 'PreTest IPA', correct, pretestQuestions.length);
   }
 }
@@ -556,7 +557,7 @@ function submitPG() {
   const score = Math.round((correct / pgQuestions.length) * 100);
   showScore(score, 'Pilihan Ganda', correct, pgQuestions.length);
   // Simpan ke server (non-blocking)
-  saveScoreToServer(state.quiz.namaTemp, state.user.kelas || '-', score);
+  saveScoreToServer(state.quiz.namaTemp, state.user.kelas || '-', score, 'posttest');
 }
 
 // ESSAY CODE DIBUANG
@@ -732,12 +733,12 @@ function showToast(msg) {
 // ============================================
 const API_BASE = 'api';
 
-function saveScoreToServer(nama, kelas, skor) {
+function saveScoreToServer(nama, kelas, skor, tipe = 'posttest') {
   fetch(API_BASE + '/submit_score.php', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ nama, kelas, skor })
-  }).catch(() => { }); // fire-and-forget, jangan blok UI
+    body: JSON.stringify({ nama, kelas, skor, tipe })
+  }).catch(() => { });
 }
 
 function loadLeaderboard() {
