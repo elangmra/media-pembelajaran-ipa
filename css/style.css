@@ -1125,7 +1125,7 @@ audio {
   flex-direction: column;
   align-items: center;
   justify-content: space-between;
-  width: 115px;
+  width: 120px;
   min-height: 155px;
   border: none;
   border-radius: 20px;
@@ -1156,10 +1156,10 @@ audio {
 }
 
 .bmc-label-top {
-  font-size: 0.8rem;
+  font-size: 0.72rem;
   font-weight: 900;
   color: white;
-  letter-spacing: 0.5px;
+  letter-spacing: 0px;
   text-align: center;
   line-height: 1.2;
   opacity: 0.95;
@@ -1172,10 +1172,10 @@ audio {
   z-index: 1;
 }
 .bmc-label-bot {
-  font-size: 0.8rem;
+  font-size: 0.72rem;
   font-weight: 900;
   color: white;
-  letter-spacing: 0.5px;
+  letter-spacing: 0px;
   text-align: center;
   line-height: 1.2;
   opacity: 0.95;
@@ -1198,7 +1198,7 @@ audio {
 .bmc-manfaat  { background: linear-gradient(160deg, #F06292, #C2185B); }
 
 @media (max-width: 600px) {
-  .bigmenu-card { width: 95px; min-height: 130px; }
+  .bigmenu-card { width: 100px; min-height: 135px; padding: 0.6rem 0.4rem; }
   .bmc-icon { font-size: 2.4rem; }
   .bigmenu-row { gap: 0.5rem; padding: 0.75rem; }
   .menu-title-line1 { font-size: 1.8rem; }
@@ -2375,19 +2375,34 @@ audio {
   bottom: -20px;
   transform: rotate(-15deg);
 }
-.developer-card h4 { 
-  font-size: 1.1rem; 
-  font-weight: 900; 
-  color: #00695C; 
-  margin-bottom: 1.2rem;
+.developer-card h4 {
+  font-size: 1.2rem;
+  font-weight: 900;
+  color: #1565C0;
+  margin: 0;
   display: inline-block;
   background: white;
-  padding: 0.5rem 1.5rem;
+  padding: 0.4rem 1.4rem;
   border-radius: 50px;
-  box-shadow: 0 4px 10px rgba(0, 105, 92, 0.1);
+  box-shadow: 0 4px 10px rgba(21, 101, 192, 0.12);
 }
-.developer-card p { font-size: 0.95rem; color: #444; line-height: 1.7; margin-bottom: 0.4rem; }
-.developer-card p strong { color: #004D40; font-size: 1.1rem; }
+
+.dev-header { display: flex; flex-direction: column; align-items: center; gap: 0.75rem; margin-bottom: 0.25rem; }
+.dev-photo { width: 100px; height: 100px; border-radius: 50%; object-fit: cover; border: 4px solid #fff; box-shadow: 0 8px 24px rgba(0,0,0,0.15); }
+.dev-info-list { display: flex; flex-direction: column; gap: 0.6rem; margin-top: 1rem; }
+.dev-info-item { border-radius: 12px; padding: 0.75rem 1rem; display: flex; align-items: center; gap: 0.75rem; text-align: left; }
+.dev-item-blue   { background: #E3F2FD; }
+.dev-item-green  { background: #E8F5E9; }
+.dev-item-orange { background: #FFF3E0; }
+.dev-info-icon { font-size: 1.3rem; flex-shrink: 0; }
+.dev-info-label { font-size: 0.72rem; color: #888; margin: 0; }
+.dev-info-value { font-weight: 900; font-size: 1rem; margin: 0; }
+.dev-val-blue   { color: #1565C0; }
+.dev-val-green  { color: #2E7D32; }
+.dev-val-orange { color: #E65100; }
+.dev-val-sm     { font-size: 0.88rem; }
+.dev-info-sub   { font-size: 0.78rem; color: #555; margin: 0; }
+.dev-footer     { margin-top: 1rem; margin-bottom: 0; font-size: 0.82rem; color: #777; text-align: center; line-height: 1.6; }
 
 /* ==========================================
    TOAST NOTIFICATION
