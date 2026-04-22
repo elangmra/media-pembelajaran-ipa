@@ -77,6 +77,40 @@ if ($isLoggedIn) {
     $avgPosttest = count($posttestRows) ? round(array_sum(array_column($posttestRows, 'skor')) / count($posttestRows), 1) : 0;
 }
 
+if ($isLoggedIn && isset($_GET['export']) && $_GET['export'] === 'excel') {
+    $pdo = getDB();
+    $stmt = $pdo->query("
+        SELECT 
+            nama, 
+            kelas,
+            MAX(CASE WHEN tipe='pretest' THEN skor END) as pretest_skor,
+            MAX(CASE WHEN tipe='posttest' THEN skor END) as posttest_skor
+        FROM leaderboard
+        GROUP BY nama, kelas
+        ORDER BY kelas, nama
+    ");
+    $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    header('Content-Type: text/csv; charset=utf-8');
+    header('Content-Disposition: attachment; filename=Nilai_Siswa_' . date('Y-m-d') . '.csv');
+    
+    $output = fopen('php://output', 'w');
+    // Tambahkan BOM agar Excel bisa membaca karakter UTF-8 dengan baik
+    fprintf($output, chr(0xEF).chr(0xBB).chr(0xBF));
+    fputcsv($output, ['Nama Siswa', 'Kelas', 'Nilai PreTest', 'Nilai PostTest']);
+    
+    foreach ($data as $row) {
+        fputcsv($output, [
+            $row['nama'], 
+            $row['kelas'], 
+            $row['pretest_skor'] ?? '-', 
+            $row['posttest_skor'] ?? '-'
+        ]);
+    }
+    fclose($output);
+    exit;
+}
+
 function e($s) { return htmlspecialchars($s, ENT_QUOTES, 'UTF-8'); }
 ?>
 <!DOCTYPE html>
@@ -270,9 +304,12 @@ tr:hover td { background: #fafbff; }
 <!-- ═══ DASHBOARD ═══ -->
 <div class="topbar">
   <h1>🏫 Dashboard Guru — Sistem Pernapasan</h1>
-  <form method="POST" style="margin:0">
-    <button type="submit" name="logout" value="1" class="btn-logout">Logout</button>
-  </form>
+  <div style="display:flex; gap:0.5rem; align-items:center;">
+    <a href="?export=excel" class="btn-logout" style="text-decoration:none; background:rgba(0,0,0,0.15); display:inline-flex; align-items:center; gap:4px;">⬇️ Export Excel</a>
+    <form method="POST" style="margin:0">
+      <button type="submit" name="logout" value="1" class="btn-logout">Logout</button>
+    </form>
+  </div>
 </div>
 
 <div class="container">

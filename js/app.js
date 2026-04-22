@@ -327,9 +327,7 @@ function renderPretestQuestion() {
 }
 
 function startPretest() {
-  const nama = document.getElementById('pretest-nama-input').value.trim();
-  if (!nama) { showToast('❗ Tulis namamu dulu ya!'); return; }
-  state.quiz.namaTemp = nama;
+  state.quiz.namaTemp = state.user.nama;
   state.quiz.type = 'pretest';
   state.quiz.currentIndex = 0;
   state.quiz.answers = new Array(pretestQuestions.length);

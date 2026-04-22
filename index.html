@@ -212,7 +212,7 @@
       <div class="login-glass-card">
         <div class="login-card-inner">
           <div class="login-brand">
-            <div class="brand-icon-wrap">
+            <!-- <div class="brand-icon-wrap">
               <svg viewBox="0 0 120 100" xmlns="http://www.w3.org/2000/svg" class="animated-lung-svg">
                 <defs>
                   <linearGradient id="loginLungGrad" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -220,21 +220,21 @@
                     <stop offset="100%" style="stop-color:#C44569" />
                   </linearGradient>
                 </defs>
-                <!-- Trachea -->
+                Trachea
                 <path d="M56 10 L64 10 L64 30 L56 30 Z" fill="#FFD1DC" opacity="0.8" />
-                <!-- Left Lobe -->
+                Left Lobe
                 <path class="lung-lobe-left" 
                   d="M60 30 C40 30 25 40 20 60 C15 80 30 95 50 90 C60 85 60 75 60 65 Z" 
                   fill="url(#loginLungGrad)" />
-                <!-- Right Lobe -->
+                Right Lobe
                 <path class="lung-lobe-right" 
                   d="M60 30 C80 30 95 40 100 60 C105 80 90 95 70 90 C60 85 60 75 60 65 Z" 
                   fill="url(#loginLungGrad)" />
-                <!-- Wind Bubbles (Animated via CSS) -->
+                Wind Bubbles (Animated via CSS)
                 <circle class="breath-bubble bb-1" cx="60" cy="20" r="3" fill="#FFF" opacity="0.6" />
                 <circle class="breath-bubble bb-2" cx="60" cy="20" r="2" fill="#FFF" opacity="0.4" />
               </svg>
-            </div>
+            </div> -->
             <h1>Halo, Siswa Pintar!</h1>
             <p>Siap untuk petualangan belajar hari ini?</p>
           </div>
@@ -704,7 +704,6 @@
             style="background: #FFF3E0; border-left: 4px solid #FF9800; padding: 1.2rem; border-radius: 8px; text-align: left; margin-bottom: 1.5rem;">
             <h4 style="color: #E65100; margin-bottom: 0.5rem; font-size: 0.95rem;">Petunjuk Pengerjaan Pretest:</h4>
             <ol style="margin-left: 1.2rem; font-size: 0.9rem; line-height: 1.6; color: #424242;">
-              <li>Tulislah nama, kelas, dan tanggal yang telah disediakan.</li>
               <li>Bacalah setiap soal dengan cermat dan teliti sebelum menjawab.</li>
               <li>Pilihlah satu jawaban yang paling benar pada huruf a, b, c, atau d.</li>
               <li>Kerjakan soal secara mandiri tanpa bantuan teman.</li>
@@ -714,7 +713,6 @@
             </ol>
           </div>
 
-          <input type="text" id="pretest-nama-input" placeholder="Ketik namamu di sini..." class="quiz-name-input" />
           <button class="btn-primary" style="background: linear-gradient(135deg, #FF8A65, #E64A19);"
             onclick="startPretest()">Mulai Pretest! 🚀</button>
         </div>
@@ -836,17 +834,7 @@
       <div class="breathing-hero">
         <div class="breathing-animation">
           <div class="lung-anim">
-            <svg viewBox="0 0 200 160" xmlns="http://www.w3.org/2000/svg" id="lung-svg">
-              <path id="lung-left"
-                d="M100 20 Q95 50 80 70 Q60 85 50 100 Q35 115 30 130 Q25 145 45 148 Q70 152 90 135 Q100 120 100 105"
-                fill="#FF7BAC" stroke="#C44569" stroke-width="2" />
-              <path id="lung-right"
-                d="M100 20 Q105 50 120 70 Q140 85 150 100 Q165 115 170 130 Q175 145 155 148 Q130 152 110 135 Q100 120 100 105"
-                fill="#FF7BAC" stroke="#C44569" stroke-width="2" />
-              <rect x="97" y="5" width="6" height="35" rx="3" fill="#2196F3" />
-              <ellipse cx="100" cy="8" rx="8" ry="5" fill="#64B5F6" />
-            </svg>
-            <p class="breathing-label" id="breathing-text">Menghirup... 😮‍💨</p>
+            <img src="images/body-breath.gif" alt="Animasi Paru-paru Bernapas" id="lung-gif" style="max-width: 100%; border-radius: 10px; margin-bottom: 10px;" />
           </div>
         </div>
         <!-- Stat cards bernapas -->
@@ -2025,7 +2013,7 @@
     </div>
   </div>
 
-  <script src="js/app.js"></script>
+  <script src="js/app.js?v=2"></script>
 </body>
 
 </html>
